@@ -1,8 +1,8 @@
-#appname: socialmenu_ios
-#publisher: yuchenzhang
-#url: http://
-#image: appicon.png
-#appid: com.socialmenu.ios
-#desc: undefined
-#type: ipad
-#guid: 588e5c5a-a1c9-4dfc-96b9-152132824b29
+#appname:socialmenu_ios
+#publisher:yuchenzhang
+#url:http://
+#image:appicon.png
+#appid:com.mysocialmenu.socialmenu
+#desc:not specified
+#type:ipad
+#guid:588e5c5a-a1c9-4dfc-96b9-152132824b29

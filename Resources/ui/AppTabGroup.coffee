@@ -7,7 +7,7 @@ class AppTabGroup
     
     win1 = new AppWindow L('win1')
     win2 = new AppWindow L('win2')
-    win3 = new MenuView L('Menu')
+    win3 = new MenuView L('My Social Menu')
     win4 = new AppWindow L('Reviews')
     win5 = new AppWindow L('Profile')
     

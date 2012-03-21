@@ -1,5 +1,5 @@
 (function() {
-  var avatar, data, num, row_data, row_view, rows, sub_top_padding, tableview, tag, the_by, top_padding, user, _len;
+  var avatar, camera, data, guideline, message, num, row_data, row_view, rows, sub_top_padding, tableview, tag, the_by, top_padding, user, _len;
 
   data = [
     {
@@ -125,9 +125,44 @@
   }
 
   tableview = Titanium.UI.createTableView({
-    data: rows
+    data: rows,
+    top: 40
   });
 
   Titanium.UI.currentWindow.add(tableview);
+
+  guideline = Titanium.UI.createView({
+    top: 0,
+    left: 0,
+    backgroundColor: 'white',
+    height: 40,
+    width: 'auto'
+  });
+
+  camera = Titanium.UI.createView({
+    top: 0,
+    right: 0,
+    backgroundColor: 'white',
+    height: 40,
+    width: 40,
+    borderColor: 'black'
+  });
+
+  message = Titanium.UI.createLabel({
+    text: 'Please scan the table QR code to obtain your table number',
+    font: {
+      fontSize: 12,
+      fontWeight: 'bold'
+    },
+    width: 'auto',
+    textAlign: 'left',
+    top: 5
+  });
+
+  guideline.add(message);
+
+  Titanium.UI.currentWindow.add(guideline);
+
+  Titanium.UI.currentWindow.add(camera);
 
 }).call(this);

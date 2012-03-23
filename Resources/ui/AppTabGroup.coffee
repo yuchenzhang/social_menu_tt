@@ -1,13 +1,13 @@
 class AppTabGroup
   constructor: ->
     AppWindow = require 'ui/AppWindow'
-    MenuView = require 'ui/MenuView'
+    MenuWindow = require 'ui/menu/MenuWindow'
     self = Ti.UI.createTabGroup()
     
     
     win1 = new AppWindow L('win1')
     win2 = new AppWindow L('win2')
-    win3 = new MenuView L('My Social Menu')
+    win3 = new MenuWindow
     win4 = new AppWindow L('Reviews')
     win5 = new AppWindow L('Profile')
     
@@ -27,7 +27,7 @@ class AppTabGroup
     
     tab3 = Ti.UI.createTab {
      title: L('Menu'),
-     icon: '/images/light_doc@2x.png',
+     icon: '/images/Titanium_Iconpack_1/light_2x/light_doc@2x.png',
      window: win3, 
      width: 120,
      height: 'auto'
@@ -36,14 +36,14 @@ class AppTabGroup
     
     tab4 = Ti.UI.createTab {
      title: L('Reviews'),
-     icon: '/images/light_book@2x.png',
+     icon: '/images/Titanium_Iconpack_1/light_2x/light_book@2x.png',
      window: win4
     }
     win4.containingTab = tab4
     
     tab5 = Ti.UI.createTab {
       title: L('Profile'),
-      icon: '/images/light_pegman@2x.png',
+      icon: '/images/Titanium_Iconpack_1/light_2x/light_pegman@2x.png',
       window: win5
     }
     win5.containingTab = tab5

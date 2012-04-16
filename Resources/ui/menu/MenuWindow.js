@@ -7,11 +7,11 @@
 
   MenuWindow = (function() {
 
-    function MenuWindow(title) {
+    function MenuWindow(uuid) {
       var data, self, tableview;
-      data = new MenuData;
+      data = new MenuData(uuid);
       self = Ti.UI.createWindow({
-        title: data.resto
+        title: data.restaurant.name
       });
       tableview = new MenuTableView(data.dishes);
       self.add(tableview);

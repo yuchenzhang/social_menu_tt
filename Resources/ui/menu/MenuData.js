@@ -3,67 +3,29 @@
 
   MenuData = (function() {
 
-    function MenuData() {
-      var menu_data;
-      menu_data = {
-        resto: "SoHo",
-        address: "Stationplein 10 Eindhoven",
-        avatar: "http://placehold.it/120x120",
-        currency: "EU",
-        dishes: [
-          {
-            name: "Unagi",
-            picture: "http://placehold.it/100x60",
-            price: 10,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Tokyo Beef",
-            picture: "http://placehold.it/100x60",
-            price: 20,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Miso soup",
-            picture: "http://placehold.it/100x60",
-            price: 8,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Thai Prawn",
-            picture: "http://placehold.it/100x60",
-            price: 15,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Thai Prawn2",
-            picture: "http://placehold.it/100x60",
-            price: 15,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Thai Prawn3",
-            picture: "http://placehold.it/100x60",
-            price: 15,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Thai Prawn4",
-            picture: "http://placehold.it/100x60",
-            price: 15,
-            recommends: 5,
-            reviews: 3
-          }, {
-            name: "Thai Prawn5",
-            picture: "http://placehold.it/100x60",
-            price: 15,
-            recommends: 5,
-            reviews: 3
-          }
-        ]
-      };
-      return menu_data;
+    function MenuData(uuid) {
+      this.getJSON(uuid);
+      alert("get json: " + this.jsonObject);
+      return this.jsonObject;
     }
+
+    MenuData.prototype.getJSON = function(uuid) {
+      var client, url;
+      url = "http://localhost:8000/menus/" + uuid + ".json";
+      client = Ti.Network.createHTTPClient({
+        onload: function() {
+          Ti.API.info("Received text: " + this.responseText);
+          return this.jsonObject = JSON.parse(this.responseText);
+        },
+        onerror: function() {
+          Ti.API.debug(e.error);
+          return alert("error");
+        },
+        timeout: 5000
+      });
+      client.open("GET", url, false);
+      return client.send();
+    };
 
     return MenuData;
 

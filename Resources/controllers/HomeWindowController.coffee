@@ -1,0 +1,3 @@
+class HomeWindowController
+  initialize: (menuData) ->
+    

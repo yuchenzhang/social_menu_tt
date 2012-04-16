@@ -2,10 +2,10 @@ MenuData = require 'ui/menu/MenuData'
 MenuTableView = require 'ui/menu/MenuTableView'
 
 class MenuWindow
-  constructor: (title)->
-    data = new MenuData
+  constructor: (uuid)->
+    data = new MenuData(uuid)
     self = Ti.UI.createWindow({
-      title: data.resto
+      title: data.restaurant.name
     })
     
     tableview = new MenuTableView(data.dishes)

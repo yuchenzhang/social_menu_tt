@@ -1,5 +1,5 @@
 (function() {
-  var MainController, Menu;
+  var HomeWindowController, MainController, Menu, MenuWindowController;
 
   Ti.include("lib/underscore.js");
 
@@ -9,10 +9,16 @@
 
   Menu = require("models/Menu");
 
+  HomeWindowController = require("controllers/HomeWindowController");
+
+  MenuWindowController = require("controllers/MenuWindowController");
+
   MainController = (function() {
 
     function MainController() {
       this.menu = new Menu();
+      this.homeWindow = new HomeWindowController(this.menu).open();
+      this.menuWindow = new MenuWindowController(this.menu);
     }
 
     return MainController;

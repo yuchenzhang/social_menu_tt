@@ -4,7 +4,6 @@ Barcode.displayedMessage = 'Scan the Social Menu QR code'
 Barcode.useLED = true
 Barcode.useFrontCamera = false
 
-MenuWindow = require "ui/menu/MenuWindow"
 class HomeWindow
   constructor: ->
     self = Ti.UI.createWindow({
@@ -45,8 +44,8 @@ class HomeWindow
                 # # Barcode.FORMAT_QR_CODE
             # # ]
         # })
-        uuid = "7b018260-6799-012f-0040-58b035fd32cb"
-        (new MenuWindow(uuid)).open()     
+        menu.set {id: "7b018260-6799-012f-0040-58b035fd32cb"}
+        
     scrollView.add scanCode
     self.add scrollView
     
@@ -55,7 +54,6 @@ class HomeWindow
       
     Barcode.addEventListener 'success', (e)->
       Barcode.cancel()
-      (new MenuWindow()).open()
            
     return self
         

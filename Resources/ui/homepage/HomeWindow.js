@@ -1,5 +1,5 @@
 (function() {
-  var Barcode, HomeWindow, MenuWindow;
+  var Barcode, HomeWindow;
 
   Barcode = require('ti.barcode');
 
@@ -10,8 +10,6 @@
   Barcode.useLED = true;
 
   Barcode.useFrontCamera = false;
-
-  MenuWindow = require("ui/menu/MenuWindow");
 
   HomeWindow = (function() {
 
@@ -42,9 +40,9 @@
         left: 0
       });
       scanCode.addEventListener('click', function() {
-        var uuid;
-        uuid = "7b018260-6799-012f-0040-58b035fd32cb";
-        return (new MenuWindow(uuid)).open();
+        return menu.set({
+          id: "7b018260-6799-012f-0040-58b035fd32cb"
+        });
       });
       scrollView.add(scanCode);
       self.add(scrollView);
@@ -52,8 +50,7 @@
         return alert('error on scaning');
       });
       Barcode.addEventListener('success', function(e) {
-        Barcode.cancel();
-        return (new MenuWindow()).open();
+        return Barcode.cancel();
       });
       return self;
     }

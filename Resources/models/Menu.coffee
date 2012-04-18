@@ -2,7 +2,7 @@ Restaurant = require "models/Restaurant"
 DishCollection = require "models/DishCollection"
 class Menu extends Backbone.Model
   urlRoot: Ti.App.endpoint + "/menus"
-  id: "7b018260-6799-012f-0040-58b035fd32cb"
+  id: null
   
   initialize: ->
     super
@@ -10,17 +10,13 @@ class Menu extends Backbone.Model
     @table_number = null
     @restaurant = new Restaurant
     @dishes = new DishCollection
-    
-    @fetch
-      success: (model, resp)=>
-        Ti.API.debug "fetch success "
-        Ti.API.debug @get "table_number" 
-        Ti.API.debug @restaurant.get "name"
-        Ti.API.debug @restaurant.get "city"
-        Ti.API.debug @dishes.map (dish)->
-          dish.get('name')
-      error: (model, resp)=>
-        Ti.API.info "fetch error with " + resp.status
+    @on "change:id", (evt)->
+      @fetch
+        success: =>
+          @trigger "data:refetched"
+        error: (model, resp, status)=>
+          Ti.API.info "fetch error with " + status
+
  
   parse: (data)->
     Ti.API.debug "parsing data: " + JSON.stringify(data)
@@ -37,5 +33,11 @@ class Menu extends Backbone.Model
     {
       table_number: data.table_number
     }
-         
+                   
 module.exports = Menu
+
+
+
+
+
+

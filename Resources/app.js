@@ -7,7 +7,7 @@
     alert('Mobile web is not yet supported by this template');
   } else {
     Ti.App = {
-      endpoint: "http://localhost:8000"
+      endpoint: "http://10.0.1.2:8000"
     };
     MainController = require('controllers/MainController');
     new MainController();

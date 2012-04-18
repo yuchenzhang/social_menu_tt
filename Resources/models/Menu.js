@@ -17,28 +17,24 @@
 
     Menu.prototype.urlRoot = Ti.App.endpoint + "/menus";
 
-    Menu.prototype.id = "7b018260-6799-012f-0040-58b035fd32cb";
+    Menu.prototype.id = null;
 
     Menu.prototype.initialize = function() {
-      var _this = this;
       Menu.__super__.initialize.apply(this, arguments);
       Ti.API.debug("Menu created with url: " + this.url());
       this.table_number = null;
       this.restaurant = new Restaurant;
       this.dishes = new DishCollection;
-      return this.fetch({
-        success: function(model, resp) {
-          Ti.API.debug("fetch success ");
-          Ti.API.debug(_this.get("table_number"));
-          Ti.API.debug(_this.restaurant.get("name"));
-          Ti.API.debug(_this.restaurant.get("city"));
-          return Ti.API.debug(_this.dishes.map(function(dish) {
-            return dish.get('name');
-          }));
-        },
-        error: function(model, resp) {
-          return Ti.API.info("fetch error with " + resp.status);
-        }
+      return this.on("change:id", function(evt) {
+        var _this = this;
+        return this.fetch({
+          success: function() {
+            return _this.trigger("data:refetched");
+          },
+          error: function(model, resp, status) {
+            return Ti.API.info("fetch error with " + status);
+          }
+        });
       });
     };
 

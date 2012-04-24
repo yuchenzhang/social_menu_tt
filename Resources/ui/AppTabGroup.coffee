@@ -1,5 +1,5 @@
 class AppTabGroup
-  constructor: ->
+  constructor: (homeW,menuW,memoW,profileW,orderW,couponW)->
     AppWindow = require 'ui/AppWindow'
     MenuWindow = require 'ui/menu/MenuWindow'
     self = Ti.UI.createTabGroup()

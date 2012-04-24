@@ -1,5 +1,5 @@
 (function() {
-  var Barcode, HomeWindowController;
+  var Barcode, HomeWindowController, MenuWindowController;
 
   Barcode = require('ti.barcode');
 
@@ -11,6 +11,8 @@
 
   Barcode.useFrontCamera = false;
 
+  MenuWindowController = require("controllers/MenuWindowController");
+
   HomeWindowController = (function() {
 
     function HomeWindowController(menu) {
@@ -18,8 +20,9 @@
         _this = this;
       this.menu = menu;
       this.window = Ti.UI.createWindow({
-        title: 'SocialMenu homepage',
-        backgroundColor: 'red'
+        title: 'Homepage',
+        backgroundColor: 'red',
+        navBarHidden: true
       });
       topView = Ti.UI.createView({
         backgroundColor: 'white',
@@ -40,11 +43,12 @@
       });
       topView.add(title);
       this.window.add(topView);
-      logoView = Ti.UI.createView({
-        backgroundImage: "images/olive.jpg",
+      logoView = Ti.UI.createImageView({
+        image: "images/olive.jpg",
         backgroundRepeat: false,
-        width: 250,
-        height: 188,
+        backgroundTopCap: 0,
+        width: 200,
+        height: 'auto',
         top: 100
       });
       this.window.add(logoView);
@@ -72,13 +76,8 @@
       });
       overlay.add(cancel);
       scanCode.addEventListener('click', function() {
-        return Barcode.capture({
-          fullscreen: false,
-          animate: true,
-          overlay: overlay,
-          showCancel: false,
-          showRectangle: true,
-          keepOpen: true
+        return _this.menu.set({
+          'id': '646e14e0-6d0f-012f-00d0-58b035fd32cb'
         });
       });
       this.window.add(scanCode);
@@ -91,11 +90,17 @@
         });
         return Barcode.cancel();
       });
+      this.menu.on("data:refetched", function() {
+        try {
+          return _this.window.containingTab.open((new MenuWindowController(_this.menu)).window, {
+            animated: true
+          });
+        } catch (e) {
+          Ti.API.error(e);
+          throw e;
+        }
+      });
     }
-
-    HomeWindowController.prototype.open = function() {
-      return this.window.open();
-    };
 
     return HomeWindowController;
 

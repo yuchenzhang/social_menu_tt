@@ -1,9 +1,11 @@
 (function() {
-  var DishCollection, Menu, Restaurant,
+  var Dish, DishCollection, Menu, Restaurant,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
   Restaurant = require("models/Restaurant");
+
+  Dish = require("models/Dish");
 
   DishCollection = require("models/DishCollection");
 
@@ -27,6 +29,7 @@
       this.dishes = new DishCollection;
       return this.on("change:id", function(evt) {
         var _this = this;
+        if (!this.get('id')) return;
         return this.fetch({
           success: function() {
             return _this.trigger("data:refetched");
@@ -42,13 +45,16 @@
       Ti.API.debug("parsing data: " + JSON.stringify(data));
       if (data.restaurant) {
         this.restaurant.set(this.restaurant.parse(data.restaurant));
-        this.dishes.reset;
-        this.dishes.add(data.restaurant.dishes.map(function(dish) {
-          return {
+        this.dishes.reset(_.map(data.restaurant.dishes, function(dish) {
+          var d;
+          d = new Dish({
             name: dish.name,
             description: dish.description,
-            price: dish.price
-          };
+            price: dish.price,
+            id: dish.id
+          });
+          d.setPictures(dish.pictures);
+          return d;
         }));
       }
       return {

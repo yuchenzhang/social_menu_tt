@@ -1,5 +1,7 @@
 Restaurant = require "models/Restaurant"
+Dish = require "models/Dish"
 DishCollection = require "models/DishCollection"
+
 class Menu extends Backbone.Model
   urlRoot: Ti.App.endpoint + "/menus"
   id: null
@@ -11,6 +13,7 @@ class Menu extends Backbone.Model
     @restaurant = new Restaurant
     @dishes = new DishCollection
     @on "change:id", (evt)->
+      return unless @get 'id'
       @fetch
         success: =>
           @trigger "data:refetched"
@@ -22,14 +25,15 @@ class Menu extends Backbone.Model
     Ti.API.debug "parsing data: " + JSON.stringify(data)
     if data.restaurant
       @restaurant.set @restaurant.parse data.restaurant
-      @dishes.reset
-      @dishes.add data.restaurant.dishes.map (dish)->
-        return {
+      @dishes.reset _.map data.restaurant.dishes, (dish)->
+        d = new Dish {
           name:dish.name
           description:dish.description
           price:dish.price
-        } 
-    
+          id: dish.id
+        }
+        d.setPictures(dish.pictures)
+        d
     {
       table_number: data.table_number
     }

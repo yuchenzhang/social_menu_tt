@@ -3,7 +3,7 @@
 
   AppTabGroup = (function() {
 
-    function AppTabGroup() {
+    function AppTabGroup(homeW, menuW, memoW, profileW, orderW, couponW) {
       var AppWindow, MenuWindow, self, tab1, tab2, tab3, tab4, tab5, win1, win2, win3, win4, win5;
       AppWindow = require('ui/AppWindow');
       MenuWindow = require('ui/menu/MenuWindow');

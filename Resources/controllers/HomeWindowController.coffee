@@ -4,12 +4,15 @@ Barcode.displayedMessage = 'Scan the Social Menu QR code'
 Barcode.useLED = false
 Barcode.useFrontCamera = false
 
+MenuWindowController = require "controllers/MenuWindowController"
+
 class HomeWindowController
   constructor: (menu)->
     @menu = menu
     @window = Ti.UI.createWindow({
-      title: 'SocialMenu homepage',
-      backgroundColor: 'red'
+      title: 'Homepage',
+      backgroundColor: 'red',
+      navBarHidden: true
     })
     
     topView = Ti.UI.createView {
@@ -30,11 +33,12 @@ class HomeWindowController
     topView.add title
     @window.add topView
     
-    logoView = Ti.UI.createView {
-      backgroundImage: "images/olive.jpg",
+    logoView = Ti.UI.createImageView {
+      image: "images/olive.jpg",
       backgroundRepeat: false,
-      width: 250,
-      height: 188,
+      backgroundTopCap: 0,
+      width: 200,
+      height: 'auto',
       top: 100
     }
     @window.add logoView
@@ -77,17 +81,18 @@ class HomeWindowController
     scanCode.addEventListener 'click', =>
         # // Note: while the simulator will NOT show a camera stream in the simulator, you may still call "Barcode.capture"
         # // to test your barcode scanning overlay.
-        Barcode.capture({
-            fullscreen:false,
-            animate: true,
-            overlay: overlay,
-            showCancel: false,
-            showRectangle: true,
-            keepOpen: true
-            # acceptedFormats: [
-                # Barcode.FORMAT_QR_CODE
-            # ]
-        })
+        # Barcode.capture({
+            # fullscreen:false,
+            # animate: true,
+            # overlay: overlay,
+            # showCancel: false,
+            # showRectangle: true,
+            # keepOpen: true
+            # # acceptedFormats: [
+                # # Barcode.FORMAT_QR_CODE
+            # # ]
+        # })
+        @menu.set {'id': '646e14e0-6d0f-012f-00d0-58b035fd32cb'}
         
         
     # scrollView.add scanCode
@@ -99,9 +104,13 @@ class HomeWindowController
     Barcode.addEventListener 'success', (e)=>
       @menu.set {'id': e.result}
       Barcode.cancel()
-           
-  open: ->
-    @window.open()
+      
+    @menu.on "data:refetched", =>
+      try
+        @window.containingTab.open (new MenuWindowController(@menu)).window, {animated: true}      
+      catch e
+        Ti.API.error e
+        throw e
         
 module.exports = HomeWindowController
     

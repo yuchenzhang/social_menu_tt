@@ -55,6 +55,7 @@
       timeout: 300000,
       traditional: false,
       xhr: function() {
+      	Ti.API.debug("Ti httpclient");
         return Ti.Network.createHTTPClient();
       },
       accepts: {
@@ -305,9 +306,9 @@
             s: s
           });
         }
-        if (s.global && !--jQuery.active) {
-          return Titanium.Network.fireEvent("ajaxStop");
-        }
+        // if (s.global && !--jQuery.active) {
+          // return Titanium.Network.fireEvent("ajaxStop");
+        // }
       };
       return xhr;
     }

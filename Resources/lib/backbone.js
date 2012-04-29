@@ -1314,10 +1314,9 @@
   // it difficult to read the body of `PUT` requests.
   Backbone.sync = function(method, model, options) {
     var type = methodMap[method];
-
+	
     // Default options, unless specified.
     options || (options = {});
-
     // Default JSON-request options.
     var params = {type: type, dataType: 'json'};
 

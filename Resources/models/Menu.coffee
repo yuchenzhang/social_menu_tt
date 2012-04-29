@@ -1,7 +1,3 @@
-Restaurant = require "models/Restaurant"
-Dish = require "models/Dish"
-DishCollection = require "models/DishCollection"
-
 class Menu extends Backbone.Model
   urlRoot: Ti.App.endpoint + "/menus"
   id: null
@@ -10,8 +6,8 @@ class Menu extends Backbone.Model
     super
     Ti.API.debug "Menu created with url: " + @url()
     @table_number = null
-    @restaurant = new Restaurant
-    @dishes = new DishCollection
+    @restaurant = new Ti.Model.Restaurant
+    @dishes = new Ti.Model.DishCollection
     @on "change:id", (evt)->
       return unless @get 'id'
       @fetch

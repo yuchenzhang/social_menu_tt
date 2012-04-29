@@ -1,5 +1,3 @@
-PictureCollection = require "models/PictureCollection"
-
 class Dish extends Backbone.Model
   urlRoot: Ti.App.endpoint + "/menus"
   id: null
@@ -22,7 +20,7 @@ class Dish extends Backbone.Model
     }
  
   setPictures: (pictures)->
-    @pictures ||= new PictureCollection
+    @pictures ||= new Ti.Model.PictureCollection
     @pictures.reset _.map pictures, (pic)->
         {id: pic.url}
     @pictures.each (pic)->

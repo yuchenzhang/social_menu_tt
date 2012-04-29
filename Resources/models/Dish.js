@@ -1,9 +1,7 @@
 (function() {
-  var Dish, PictureCollection,
+  var Dish,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
-
-  PictureCollection = require("models/PictureCollection");
 
   Dish = (function(_super) {
 
@@ -38,7 +36,7 @@
     };
 
     Dish.prototype.setPictures = function(pictures) {
-      this.pictures || (this.pictures = new PictureCollection);
+      this.pictures || (this.pictures = new Ti.Model.PictureCollection);
       this.pictures.reset(_.map(pictures, function(pic) {
         return {
           id: pic.url

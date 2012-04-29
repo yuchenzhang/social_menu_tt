@@ -1,11 +1,5 @@
 (function() {
-  var CouponWindowController, HomeWindowController, MemoWindowController, Menu, MenuWindowController, TabGroupController;
-
-  Ti.include("lib/underscore.js");
-
-  Ti.include("lib/backbone.js");
-
-  Ti.include("lib/tiajax.js");
+  var CouponWindowController, HomeWindowController, LoginWindowController, MemoWindowController, Menu, MenuWindowController, TabGroupController;
 
   Menu = require("models/Menu");
 
@@ -16,6 +10,8 @@
   CouponWindowController = require("controllers/CouponWindowController");
 
   MemoWindowController = require("controllers/MemoWindowController");
+
+  LoginWindowController = require("controllers/LoginWindowController");
 
   TabGroupController = (function() {
 

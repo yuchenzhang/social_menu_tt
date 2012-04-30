@@ -176,6 +176,8 @@ jasmine.Ajax = {
       jQuery.ajaxSettings.xhr = jasmine.Ajax.real;
     } else if (jasmine.Ajax.mode == 'Prototype') {
       Ajax.getTransport = jasmine.Ajax.real;
+    } else if (jasmine.Ajax.mode == 'Titanium') {
+   	  Ti.Network.ajaxSettings = _.extend(Ti.Network.ajaxSettings, {xhr: jasmine.Ajax.real});
     }
     jasmine.Ajax.reset();
   },

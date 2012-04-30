@@ -15,7 +15,7 @@ class User extends Backbone.Model
         
   signIn: ->
     Ti.API.debug "sign in with " + JSON.stringify(@) + " to url " + @url()
-    return false unless @isValid()
+    return false unless @isValid(true)
     options = 
       url: @url() + '/sign_in.json'
       contentType: 'application/json'

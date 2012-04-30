@@ -36,7 +36,6 @@ describe 'User model', ->
       spyOn(user, 'isValid').andReturn false
       expect(user.signIn()).toBeFalsy()
     it 'should retrieve the token when succeed in sign in', ->
-      spyOn(user, 'isValid').andReturn true
       spyOn(user, 'set')
       user.signIn()
       request = mostRecentAjaxRequest()
@@ -51,3 +50,14 @@ describe 'User model', ->
         })
       })
       expect(user.set).toHaveBeenCalledWith({authentication_token:'pWyfHDKbBuCP8hjtv6ks'})
+    it 'should not update token when failed in sign in', ->
+      spyOn(user, 'set')
+      user.signIn()
+      request = mostRecentAjaxRequest()
+      request.response({
+        status: 401
+        responseText: JSON.stringify({
+            error: "invalid email or password"
+        })
+      })
+      expect(user.set).not.toHaveBeenCalledWith()

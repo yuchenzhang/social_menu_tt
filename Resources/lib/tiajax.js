@@ -55,7 +55,6 @@
       timeout: 300000,
       traditional: false,
       xhr: function() {
-      	Ti.API.debug("Ti httpclient");
         return Ti.Network.createHTTPClient();
       },
       accepts: {
@@ -178,10 +177,9 @@
         ret = s.url.replace(rts, "$1_=" + ts + "$2");
         s.url = ret + (ret === s.url ? (rquery.test(s.url) ? "&" : "?") + "_=" + ts : "");
       }
+      
       if (s.data && type === "GET") {
-        s.url += ((_ref = rquery.test(s.url)) != null ? _ref : {
-          "&": "?"
-        }) + s.data;
+        s.url += (rquery.test(s.url)  ?  "&": "?") + s.data;
       }
       parts = rurl.exec(s.url);
       remote = true;
@@ -243,6 +241,7 @@
           if (status === "success" || status === "notmodified") {
             success();
           } else {
+          	Ti.API.error("ajax error with message: " + JSON.stringify(s));
             Titanium.Network.handleError(s, xhr, status, errMsg);
           }
           complete();

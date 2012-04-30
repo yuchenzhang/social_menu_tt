@@ -35,7 +35,7 @@
       var options,
         _this = this;
       Ti.API.debug("sign in with " + JSON.stringify(this) + " to url " + this.url());
-      if (!this.isValid()) return false;
+      if (!this.isValid(true)) return false;
       options = {
         url: this.url() + '/sign_in.json',
         contentType: 'application/json',

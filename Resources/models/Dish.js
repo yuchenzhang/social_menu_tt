@@ -13,16 +13,24 @@
 
     Dish.prototype.urlRoot = Ti.App.endpoint + "/menus";
 
-    Dish.prototype.id = null;
-
     Dish.prototype.defaults = {
-      name: "unknown",
-      description: "unknown",
-      price: "unknown"
+      id: null,
+      name: null,
+      price: null
     };
 
-    Dish.prototype.initialize = function() {
-      return Dish.__super__.initialize.apply(this, arguments);
+    Dish.prototype.validation = {
+      id: {
+        required: true,
+        pattern: /\d+/
+      },
+      name: {
+        required: true
+      },
+      price: {
+        required: true,
+        pattern: 'number'
+      }
     };
 
     Dish.prototype.parse = function(data) {
@@ -37,14 +45,11 @@
 
     Dish.prototype.setPictures = function(pictures) {
       this.pictures || (this.pictures = new Ti.Model.PictureCollection);
-      this.pictures.reset(_.map(pictures, function(pic) {
+      return this.pictures.reset(_.map(pictures, function(pic) {
         return {
           id: pic.url
         };
       }));
-      return this.pictures.each(function(pic) {
-        return Ti.API.debug(pic.get('id'));
-      });
     };
 
     return Dish;

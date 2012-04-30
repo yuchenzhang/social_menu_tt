@@ -65,9 +65,8 @@
         spyOn(user, 'isValid').andReturn(false);
         return expect(user.signIn()).toBeFalsy();
       });
-      return it('should retrieve the token when succeed in sign in', function() {
+      it('should retrieve the token when succeed in sign in', function() {
         var request;
-        spyOn(user, 'isValid').andReturn(true);
         spyOn(user, 'set');
         user.signIn();
         request = mostRecentAjaxRequest();
@@ -84,6 +83,19 @@
         return expect(user.set).toHaveBeenCalledWith({
           authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
         });
+      });
+      return it('should not update token when failed in sign in', function() {
+        var request;
+        spyOn(user, 'set');
+        user.signIn();
+        request = mostRecentAjaxRequest();
+        request.response({
+          status: 401,
+          responseText: JSON.stringify({
+            error: "invalid email or password"
+          })
+        });
+        return expect(user.set).not.toHaveBeenCalledWith();
       });
     });
   });

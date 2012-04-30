@@ -12,12 +12,31 @@
     }
 
     Restaurant.prototype.defaults = {
-      name: "unknown",
-      latitude: "unknown",
-      longitude: "unknown",
-      address_line_1: "unknown",
-      address_line_2: "unknown",
-      city: "unknown"
+      name: null,
+      latitude: null,
+      longitude: null,
+      address_line_1: null,
+      city: null
+    };
+
+    Restaurant.prototype.validation = {
+      name: {
+        required: true
+      },
+      latitude: {
+        required: true,
+        pattern: 'number'
+      },
+      longitude: {
+        required: true,
+        pattern: 'number'
+      },
+      address_line_1: {
+        required: true
+      },
+      city: {
+        required: true
+      }
     };
 
     Restaurant.prototype.parse = function(data) {

@@ -13,7 +13,15 @@
 
     Picture.prototype.urlRoot = Ti.App.endpoint;
 
-    Picture.prototype.id = null;
+    Picture.prototype.defaults = {
+      id: null
+    };
+
+    Picture.prototype.validation = {
+      id: {
+        required: true
+      }
+    };
 
     return Picture;
 

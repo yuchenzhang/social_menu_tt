@@ -1,5 +1,8 @@
 class Picture extends Backbone.Model
   urlRoot: Ti.App.endpoint
-  id: null
-        
+  defaults:
+    id: null
+  validation:
+    id:
+      required: true       
 module.exports = Picture 

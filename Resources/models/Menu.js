@@ -13,26 +13,47 @@
 
     Menu.prototype.urlRoot = Ti.App.endpoint + "/menus";
 
-    Menu.prototype.id = null;
+    Menu.prototype.defaults = {
+      id: null,
+      table_number: null,
+      authentication_token: null
+    };
+
+    Menu.prototype.validation = {};
 
     Menu.prototype.initialize = function() {
+      var _this = this;
       Menu.__super__.initialize.apply(this, arguments);
       Ti.API.debug("Menu created with url: " + this.url());
-      this.table_number = null;
       this.restaurant = new Ti.Model.Restaurant;
       this.dishes = new Ti.Model.DishCollection;
-      return this.on("change:id", function(evt) {
-        var _this = this;
-        if (!this.get('id')) return;
-        return this.fetch({
+      this.on("change:id", function() {
+        if (!(_this.get('id') && _this.get('authentication_token'))) return;
+        return _this.fetch({
+          data: {
+            authentication_token: _this.get('authentication_token')
+          },
           success: function() {
             return _this.trigger("data:refetched");
           },
-          error: function(model, resp, status) {
-            return Ti.API.info("fetch error with " + status);
+          error: function(model, resp) {
+            return Ti.API.error("menu fetch error with " + model.get('id'));
           }
         });
       });
+      if (this.get('id') && this.get('authentication_token')) {
+        return this.fetch({
+          data: {
+            authentication_token: this.get('authentication_token')
+          },
+          success: function() {
+            return _this.trigger("data:refetched");
+          },
+          error: function(model, resp) {
+            return Ti.API.error("menu fetch error with " + model.get('id'));
+          }
+        });
+      }
     };
 
     Menu.prototype.parse = function(data) {

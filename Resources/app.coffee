@@ -11,6 +11,7 @@ init = ->
     Menu: require "models/Menu"
     Restaurant: require "models/Restaurant"
     User: require "models/User"
+    Order: require "models/Order"
       
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"

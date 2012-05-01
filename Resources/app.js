@@ -14,7 +14,8 @@
       DishCollection: require("models/DishCollection"),
       Menu: require("models/Menu"),
       Restaurant: require("models/Restaurant"),
-      User: require("models/User")
+      User: require("models/User"),
+      Order: require("models/Order")
     };
     if (Ti.App.test_enabled) {
       return Ti.include("specs/tests.js");

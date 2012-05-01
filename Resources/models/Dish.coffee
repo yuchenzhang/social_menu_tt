@@ -1,6 +1,4 @@
 class Dish extends Backbone.Model
-  urlRoot: Ti.App.endpoint + "/menus"
-  
   defaults:
     id: null   
     name: null

@@ -11,8 +11,6 @@
       Dish.__super__.constructor.apply(this, arguments);
     }
 
-    Dish.prototype.urlRoot = Ti.App.endpoint + "/menus";
-
     Dish.prototype.defaults = {
       id: null,
       name: null,

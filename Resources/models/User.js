@@ -31,10 +31,21 @@
       }
     };
 
+    User.prototype.initialize = function() {
+      var _this = this;
+      User.__super__.initialize.apply(this, arguments);
+      this.on('validated:invalid', function(model, error, options) {
+        return Ti.API.error("User model invalid:" + JSON.stringify(error));
+      });
+      return this.on('signIn:error', function(model, resp) {
+        return Ti.API.debug("sign in error");
+      });
+    };
+
     User.prototype.signIn = function() {
       var options,
         _this = this;
-      Ti.API.debug("sign in with " + JSON.stringify(this) + " to url " + this.url());
+      Ti.API.debug("sign in with " + JSON.stringify(this));
       if (!this.isValid(true)) return false;
       options = {
         url: this.url() + '/sign_in.json',
@@ -47,9 +58,16 @@
         }),
         success: function(resp, status, xhr) {
           Ti.API.debug('sign in succeeded with resp: ' + JSON.stringify(resp));
+          Ti.DB.Util.insertUser(_this.get('name'), resp.authentication_token);
+          Ti.DB.Util.activateUser(resp.authentication_token);
           return _this.set({
-            authentication_token: resp.authentication_token
+            authentication_token: resp.authentication_token,
+            avatar: Ti.App.endpoint + resp.avatar,
+            name: resp.name
           });
+        },
+        error: function(model, resp) {
+          return _this.trigger('signIn:error', _this, resp);
         }
       };
       return (this.sync || Backbone.sync).call(this, 'create', this, options);

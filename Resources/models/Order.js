@@ -16,7 +16,8 @@
     Order.prototype.defaults = {
       id: null,
       restaurant_id: null,
-      user_id: null
+      user_id: null,
+      status: null
     };
 
     Order.prototype.validation = {
@@ -31,22 +32,50 @@
       user_id: {
         required: true,
         pattern: /\d+/
+      },
+      status: {
+        required: false,
+        oneOf: ['pending', 'submitted', 'confirmed', 'reopened', 'closed', 'canceled']
       }
     };
 
     Order.prototype.addDish = function(dish) {
+      var count;
       if (!(dish instanceof Ti.Model.Dish)) {
         throw "Order adding a dish with not recognized type";
       }
       this.dishes || (this.dishes = new Ti.Model.DishCollection);
-      return this.dishes.add(dish);
+      if (dish.get('count') > 0) {
+        count = dish.get('count');
+        dish.set({
+          count: count + 1
+        });
+      } else {
+        this.dishes.add(dish);
+        dish.set({
+          count: 1
+        });
+      }
+      return this.trigger('change_dish:' + dish.id);
     };
 
     Order.prototype.removeDish = function(dish) {
+      var count;
       if (!(dish instanceof Ti.Model.Dish)) {
         throw "Order adding a dish with not recognized type";
       }
-      return this.dishes.remove(dish);
+      if (dish.get('count') === 1) {
+        dish.set({
+          count: 0
+        });
+        this.dishes.remove(dish);
+      } else {
+        count = dish.get('count');
+        dish.set({
+          count: count - 1
+        });
+      }
+      return this.trigger('change_dish:' + dish.id);
     };
 
     Order.prototype.toJSON = function() {
@@ -54,16 +83,39 @@
       json = {
         id: this.get('id'),
         restaurant_id: this.get('restaurant_id'),
-        user_id: this.get('user_id')
+        user_id: this.get('user_id'),
+        authentication_token: this.get('authentication_token')
       };
       if (this.dishes) {
         json.dishes = this.dishes.map(function(dish) {
           return {
-            id: dish.get('id')
+            id: dish.get('id'),
+            count: dish.get('count')
           };
         });
       }
       return json;
+    };
+
+    Order.prototype.parse = function(data) {
+      Ti.API.debug("parsing order " + JSON.stringify(data));
+      if (data.dishes) {
+        this.dishes || (this.dishes = new Ti.Model.DishCollection);
+        this.dishes.reset(_.map(data.dishes, function(dish) {
+          return new Ti.Model.Dish({
+            id: dish.id,
+            name: dish.name,
+            price: dish.price
+          });
+        }));
+      }
+      Ti.API.debug("dishes added");
+      return {
+        id: data.id,
+        restaurant_id: data.restaurant.id,
+        user_id: data.host.id,
+        status: data.status
+      };
     };
 
     return Order;

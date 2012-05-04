@@ -1,19 +1,12 @@
-Menu = require "models/Menu"
-HomeWindowController = require "controllers/HomeWindowController"
-MenuWindowController = require "controllers/MenuWindowController"
-CouponWindowController = require "controllers/CouponWindowController"
-MemoWindowController = require "controllers/MemoWindowController"
-LoginWindowController = require "controllers/LoginWindowController"
-
 class TabGroupController
-  constructor: ->
+  constructor: (user)->
     tab_group = Ti.UI.createTabGroup
       titleid: 'tab_group'
     
-    menu = new Menu()
-    home_window = new HomeWindowController(menu).window
-    coupon_window = new CouponWindowController(menu).window
-    memo_window = new MemoWindowController(menu).window
+    menu = new Ti.Model.Menu
+    home_window = (new Ti.Controller.HomeWindow(menu,user)).window
+    coupon_window = (new Ti.Controller.CouponWindow(menu)).window
+    memo_window = (new Ti.Controller.MemoWindow(menu)).window
       
     memo_tab = Ti.UI.createTab
       titleid: "memo_tab"

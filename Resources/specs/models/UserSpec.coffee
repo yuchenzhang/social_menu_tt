@@ -50,8 +50,9 @@ describe 'User model', ->
         })
       })
       expect(user.set).toHaveBeenCalledWith({authentication_token:'pWyfHDKbBuCP8hjtv6ks'})
-    it 'should not update token when failed in sign in', ->
+    it 'should not update token and trigger signIn:error when failed in sign in', ->
       spyOn(user, 'set')
+      trigger = spyOn(user, 'trigger')
       user.signIn()
       request = mostRecentAjaxRequest()
       request.response({
@@ -60,4 +61,5 @@ describe 'User model', ->
             error: "invalid email or password"
         })
       })
-      expect(user.set).not.toHaveBeenCalledWith()
+      expect(user.set).not.toHaveBeenCalled()
+      expect(trigger.mostRecentCall.args[0]).toEqual 'signIn:error'

@@ -3,6 +3,7 @@ class Dish extends Backbone.Model
     id: null   
     name: null
     price: null
+    count: 0
   
   validation:
     id:
@@ -13,6 +14,10 @@ class Dish extends Backbone.Model
     price:
       required: true
       pattern: 'number'
+    count:
+      required: true
+      pattern: /\d+/
+      min: 0
 
   parse: (data)->
     Ti.API.debug "parsing data dish: " + JSON.stringify(data)

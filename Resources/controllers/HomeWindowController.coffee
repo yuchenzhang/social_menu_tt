@@ -7,8 +7,9 @@ Barcode.useFrontCamera = false
 MenuWindowController = require "controllers/MenuWindowController"
 
 class HomeWindowController
-  constructor: (menu)->
+  constructor: (menu, user)->
     @menu = menu
+    @user = user
     @window = Ti.UI.createWindow({
       title: 'Homepage',
       backgroundColor: 'red',
@@ -107,7 +108,7 @@ class HomeWindowController
       
     @menu.on "data:refetched", =>
       try
-        @window.containingTab.open (new MenuWindowController(@menu)).window, {animated: true}      
+        @window.containingTab.open (new Ti.Controller.MenuWindow(@menu, @user)).window, {animated: true}      
       catch e
         Ti.API.error e
         throw e

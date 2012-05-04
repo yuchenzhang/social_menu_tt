@@ -15,10 +15,11 @@
 
   HomeWindowController = (function() {
 
-    function HomeWindowController(menu) {
+    function HomeWindowController(menu, user) {
       var cancel, logoView, overlay, scanCode, title, topView,
         _this = this;
       this.menu = menu;
+      this.user = user;
       this.window = Ti.UI.createWindow({
         title: 'Homepage',
         backgroundColor: 'red',
@@ -92,7 +93,7 @@
       });
       this.menu.on("data:refetched", function() {
         try {
-          return _this.window.containingTab.open((new MenuWindowController(_this.menu)).window, {
+          return _this.window.containingTab.open((new Ti.Controller.MenuWindow(_this.menu, _this.user)).window, {
             animated: true
           });
         } catch (e) {

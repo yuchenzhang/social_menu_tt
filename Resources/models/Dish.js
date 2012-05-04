@@ -14,7 +14,8 @@
     Dish.prototype.defaults = {
       id: null,
       name: null,
-      price: null
+      price: null,
+      count: 0
     };
 
     Dish.prototype.validation = {
@@ -28,6 +29,11 @@
       price: {
         required: true,
         pattern: 'number'
+      },
+      count: {
+        required: true,
+        pattern: /\d+/,
+        min: 0
       }
     };
 

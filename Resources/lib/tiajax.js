@@ -152,6 +152,7 @@
     },
     handleError: function(s, xhr, status, e) {
       if (s.error) {
+      	Ti.API.debug("call custom error handling");
         s.error.call(s.context || s, xhr, status, e);
       }
       if (s.global) {
@@ -241,7 +242,7 @@
           if (status === "success" || status === "notmodified") {
             success();
           } else {
-          	Ti.API.error("ajax error with message: " + JSON.stringify(s));
+          	Ti.API.error("ajax error with message: " + errMsg + " and status: " + status);
             Titanium.Network.handleError(s, xhr, status, errMsg);
           }
           complete();

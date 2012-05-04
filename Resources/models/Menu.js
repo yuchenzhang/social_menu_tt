@@ -15,8 +15,7 @@
 
     Menu.prototype.defaults = {
       id: null,
-      table_number: null,
-      authentication_token: null
+      table_number: null
     };
 
     Menu.prototype.validation = {};
@@ -28,10 +27,10 @@
       this.restaurant = new Ti.Model.Restaurant;
       this.dishes = new Ti.Model.DishCollection;
       this.on("change:id", function() {
-        if (!(_this.get('id') && _this.get('authentication_token'))) return;
+        if (!(_this.get('id') && Ti.DB.Util.activeToken())) return;
         return _this.fetch({
           data: {
-            authentication_token: _this.get('authentication_token')
+            authentication_token: Ti.DB.Util.activeToken()
           },
           success: function() {
             return _this.trigger("data:refetched");
@@ -41,10 +40,10 @@
           }
         });
       });
-      if (this.get('id') && this.get('authentication_token')) {
+      if (this.get('id') && Ti.DB.Util.activeToken()) {
         return this.fetch({
           data: {
-            authentication_token: this.get('authentication_token')
+            authentication_token: Ti.DB.Util.activeToken()
           },
           success: function() {
             return _this.trigger("data:refetched");
@@ -59,18 +58,21 @@
     Menu.prototype.parse = function(data) {
       Ti.API.debug("parsing data: " + JSON.stringify(data));
       if (data.restaurant) {
-        this.restaurant.set(this.restaurant.parse(data.restaurant));
-        this.dishes.reset(_.map(data.restaurant.dishes, function(dish) {
-          var d;
-          d = new Dish({
-            name: dish.name,
-            description: dish.description,
-            price: dish.price,
-            id: dish.id
-          });
-          d.setPictures(dish.pictures);
-          return d;
-        }));
+        try {
+          this.restaurant.set(this.restaurant.parse(data.restaurant));
+          this.dishes.reset(_.map(data.restaurant.dishes, function(dish) {
+            var d;
+            d = new Ti.Model.Dish({
+              name: dish.name,
+              price: dish.price,
+              id: dish.id
+            });
+            d.setPictures(dish.pictures);
+            return d;
+          }));
+        } catch (e) {
+          Ti.API.error(e);
+        }
       }
       return {
         table_number: data.table_number

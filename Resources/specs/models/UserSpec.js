@@ -84,9 +84,10 @@
           authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
         });
       });
-      return it('should not update token when failed in sign in', function() {
-        var request;
+      return it('should not update token and trigger signIn:error when failed in sign in', function() {
+        var request, trigger;
         spyOn(user, 'set');
+        trigger = spyOn(user, 'trigger');
         user.signIn();
         request = mostRecentAjaxRequest();
         request.response({
@@ -95,7 +96,8 @@
             error: "invalid email or password"
           })
         });
-        return expect(user.set).not.toHaveBeenCalledWith();
+        expect(user.set).not.toHaveBeenCalled();
+        return expect(trigger.mostRecentCall.args[0]).toEqual('signIn:error');
       });
     });
   });

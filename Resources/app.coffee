@@ -1,7 +1,7 @@
 init = ->  
   Ti.App = 
-    endpoint: "http://10.0.1.2:8000"
-    test_enabled: true
+    endpoint: "http://localhost:8000"
+    test_enabled: false
   
   Ti.Model = 
     Picture: require "models/Picture"
@@ -12,12 +12,23 @@ init = ->
     Restaurant: require "models/Restaurant"
     User: require "models/User"
     Order: require "models/Order"
-      
+    
+  Ti.DB = 
+    Util: require "models/DB"
+    name: 'socialmenuDB'
+    
+  Ti.Controller =
+    LoginWindow: require 'controllers/LoginWindowController'
+    TabGroup: require 'controllers/TabGroupController'
+    HomeWindow: require "controllers/HomeWindowController"
+    MenuWindow: require "controllers/MenuWindowController"
+    CouponWindow: require "controllers/CouponWindowController"
+    MemoWindow: require "controllers/MemoWindowController"
+         
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"
   else
-    TabGroupController = require 'controllers/TabGroupController'
-    new TabGroupController()
+    new Ti.Controller.LoginWindow
   
 if Ti.version < 1.8
   alert('Sorry - this application template requires Titanium Mobile SDK 1.8 or later')

@@ -39,6 +39,11 @@
       }
     };
 
+    Order.prototype.initialize = function(attrs) {
+      Order.__super__.initialize.call(this, attrs);
+      return Ti.API.debug("order created:" + JSON.stringify(this.toJSON()));
+    };
+
     Order.prototype.addDish = function(dish) {
       var count;
       if (!(dish instanceof Ti.Model.Dish)) {
@@ -76,6 +81,15 @@
         });
       }
       return this.trigger('change_dish:' + dish.id);
+    };
+
+    Order.prototype.totalPrice = function() {
+      var total;
+      total = 0;
+      this.dishes.each(function(dish) {
+        return total += (parseFloat(dish.get('price'))) * dish.get('count');
+      });
+      return total;
     };
 
     Order.prototype.toJSON = function() {

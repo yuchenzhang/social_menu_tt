@@ -108,7 +108,9 @@ class HomeWindowController
       
     @menu.on "data:refetched", =>
       try
-        @window.containingTab.open (new Ti.Controller.MenuWindow(@menu, @user)).window, {animated: true}      
+        menu_window = (new Ti.Controller.MenuWindow(@menu, @user)).window
+        menu_window.containingTab = @window.containingTab
+        @window.containingTab.open menu_window, {animated: true}
       catch e
         Ti.API.error e
         throw e

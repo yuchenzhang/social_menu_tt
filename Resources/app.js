@@ -3,7 +3,7 @@
 
   init = function() {
     Ti.App = {
-      endpoint: "http://localhost:8000",
+      endpoint: "http://10.0.1.2:8000",
       test_enabled: false
     };
     Ti.Model = {
@@ -17,16 +17,18 @@
       Order: require("models/Order")
     };
     Ti.DB = {
-      Util: require("models/DB"),
+      Util: require("helper/DB"),
       name: 'socialmenuDB'
     };
+    Ti.ImageProcess = require("helper/ImageProcess");
     Ti.Controller = {
       LoginWindow: require('controllers/LoginWindowController'),
       TabGroup: require('controllers/TabGroupController'),
       HomeWindow: require("controllers/HomeWindowController"),
       MenuWindow: require("controllers/MenuWindowController"),
       CouponWindow: require("controllers/CouponWindowController"),
-      MemoWindow: require("controllers/MemoWindowController")
+      MemoWindow: require("controllers/MemoWindowController"),
+      OrderWindow: require("controllers/OrderWindowController")
     };
     if (Ti.App.test_enabled) {
       return Ti.include("specs/tests.js");

@@ -2,10 +2,10 @@ class MenuWindowController
   constructor: (menu, user)->
     @menu = menu
     @user = user
-    @order = new Ti.Model.Order
+    @order = new Ti.Model.Order {restaurant_id:@menu.restaurant.get('id'),user_id:@user.get('id')}
     @window = Ti.UI.createWindow
       title: 'SocialMenu menupage'
-      backgroundColor: 'white'
+      backgroundImage: "images/wooden_floor.jpg"
       navBarHidden: true
     @render()
     
@@ -15,7 +15,6 @@ class MenuWindowController
     @renderDishStrip()
   
   renderTopBar: ->
-    Ti.API.debug "render topbar"
     @top_bar ||= Ti.UI.createView
       backgroundImage: "images/menu_background_1.jpg"
       width: "100%"
@@ -32,12 +31,36 @@ class MenuWindowController
       title:'Check my orders'
       right: 5
     @top_bar.add checkout_btn
+    checkout_btn.addEventListener 'click', =>
+      order_window = (new Ti.Controller.OrderWindow(@order,@user)).window
+      order_window.containingTab = @window.containingTab
+      @window.containingTab.open order_window
+    back_btn = Titanium.UI.createButton
+      color:"black"
+      backgroundImage:'images/BUTT_gry_off.png'
+      backgroundSelectedImage:'images/BUTT_gry_on.png'
+      backgroundDisabledImage: 'images/BUTT_drk_off.png'
+      width:50
+      height:30
+      font:{fontSize:14,fontWeight:'bold',fontFamily:'Helvetica Neue'}
+      title:'back'
+      left: 5
+    @top_bar.add back_btn
+    back_btn.addEventListener 'click', =>
+      @window.close()
+      @menu.set {id:null}
+      delete @
+    @user_bar ||= Ti.UI.createView
+      backgroundColor: "transparent"
+      width: "100%"
+      height: 35
+      top:35
     avatar = Ti.UI.createImageView
       image: @user.get 'avatar'
       width: 25
       height: 25
       left: 10
-    @top_bar.add avatar
+    @user_bar.add avatar
     name = Ti.UI.createLabel
       color: "white"
       font: {fontSize: 15}
@@ -46,44 +69,28 @@ class MenuWindowController
       width: 80
       height: 25
       left: 40
-    @top_bar.add name   
+    @user_bar.add name   
     @window.add @top_bar
+    @window.add @user_bar
         
   renderDishStrip: ->
     Ti.API.debug 'render dishstrip'
     @dish_strip ||= Ti.UI.createTableView
-      backgroundImage: "images/menu_background_1.jpg"
+      backgroundImage: "images/wooden_floor.jpg"
       width: '100%'
-      top: 35
+      top: 70
       showVerticalScrollIndicator: false
     rows = @menu.dishes.map (dish)=>
-      @createRowOfType dish, 1
-    @dish_strip.setData rows
-        
+      @createRowOfType dish
+    @dish_strip.setData rows    
     @window.add @dish_strip
-    
-  cropImageForMenuView: (url, type)->
-    switch type
-      when 1
-        baseImage = Ti.UI.createImageView
-          image: url
-          width: 320
-          height: 'auto'
-        cropView = Ti.UI.createView
-          width: 320
-          height: 140
-        cropView.add baseImage
-        croppedImage = cropView.toImage()
-        return croppedImage
-      when 2
-        return
          
   createRowOfType: (dish)->
     url = decodeURIComponent dish.pictures.at(0).url() 
-    blob = @cropImageForMenuView url, 1
+    blob = Ti.ImageProcess.cropImageForMenuView url
     row = Ti.UI.createTableViewRow
        height: 'auto'
-       layout: "vertical"
+       layout: "vertical"   
     info_bar = Ti.UI.createView
        backgroundColor: "#D8F6CE"
        width: "100%"
@@ -98,10 +105,10 @@ class MenuWindowController
        height: 30
        top: 0
        left: 12
-    memo = Ti.UI.createLabel
+    price = Ti.UI.createLabel
        color: "black"
        font: {fontSize: 13,fontStyle:"italic"}
-       text: "20+ memos"
+       text: '€' + dish.get 'price'
        textAlign: Ti.UI.TEXT_ALIGNMENT_RIGHT
        width: 100
        height: 30
@@ -143,7 +150,7 @@ class MenuWindowController
        @order.addDish dish
                   
     info_bar.add name
-    info_bar.add memo
+    info_bar.add price
     review_bar.add description  
     row.add info_bar
     row.add image_bar

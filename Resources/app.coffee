@@ -1,6 +1,8 @@
 init = ->  
   Ti.App = 
-    endpoint: "http://localhost:8000"
+    # endpoint: "http://localhost:8000"
+    endpoint: "http://10.0.1.2:8000"
+    # endpoint: "http://192.168.1.5:8000"
     test_enabled: false
   
   Ti.Model = 
@@ -14,8 +16,10 @@ init = ->
     Order: require "models/Order"
     
   Ti.DB = 
-    Util: require "models/DB"
+    Util: require "helper/DB"
     name: 'socialmenuDB'
+  
+  Ti.ImageProcess = require "helper/ImageProcess"
     
   Ti.Controller =
     LoginWindow: require 'controllers/LoginWindowController'
@@ -24,6 +28,7 @@ init = ->
     MenuWindow: require "controllers/MenuWindowController"
     CouponWindow: require "controllers/CouponWindowController"
     MemoWindow: require "controllers/MemoWindowController"
+    OrderWindow: require "controllers/OrderWindowController"
          
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"

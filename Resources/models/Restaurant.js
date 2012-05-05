@@ -47,7 +47,8 @@
         longitude: data.longitude,
         address_line_1: data.address_line_1,
         address_line_2: data.address_line_2,
-        city: data.city
+        city: data.city,
+        id: data.id
       };
     };
 

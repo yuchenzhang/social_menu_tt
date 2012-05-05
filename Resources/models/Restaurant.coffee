@@ -29,6 +29,7 @@ class Restaurant extends Backbone.Model
       address_line_1: data.address_line_1
       address_line_2: data.address_line_2
       city: data.city
+      id: data.id
     }
       
 module.exports = Restaurant  

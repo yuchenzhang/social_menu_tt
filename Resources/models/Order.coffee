@@ -20,7 +20,11 @@ class Order extends Backbone.Model
     status:
       required: false
       oneOf: ['pending', 'submitted', 'confirmed', 'reopened', 'closed', 'canceled']
-      
+  
+  initialize: (attrs)->
+    super attrs
+    Ti.API.debug "order created:" + JSON.stringify @toJSON()
+        
   addDish: (dish)->
     throw "Order adding a dish with not recognized type" unless dish instanceof Ti.Model.Dish
     @dishes ||= new Ti.Model.DishCollection
@@ -41,7 +45,13 @@ class Order extends Backbone.Model
       count =  dish.get 'count'
       dish.set {count: count - 1}
     @trigger 'change_dish:'+dish.id
-    
+  
+  totalPrice: ->
+    total = 0
+    @dishes.each (dish)->
+      total += (parseFloat dish.get 'price') * dish.get('count')
+    return total  
+  
   toJSON: ->
     json = {
       id: @get 'id'

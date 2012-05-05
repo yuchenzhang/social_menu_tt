@@ -92,8 +92,11 @@
         return Barcode.cancel();
       });
       this.menu.on("data:refetched", function() {
+        var menu_window;
         try {
-          return _this.window.containingTab.open((new Ti.Controller.MenuWindow(_this.menu, _this.user)).window, {
+          menu_window = (new Ti.Controller.MenuWindow(_this.menu, _this.user)).window;
+          menu_window.containingTab = _this.window.containingTab;
+          return _this.window.containingTab.open(menu_window, {
             animated: true
           });
         } catch (e) {

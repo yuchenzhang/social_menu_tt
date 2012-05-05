@@ -63,7 +63,8 @@
           return _this.set({
             authentication_token: resp.authentication_token,
             avatar: Ti.App.endpoint + resp.avatar,
-            name: resp.name
+            name: resp.name,
+            id: resp.id
           });
         },
         error: function(model, resp) {

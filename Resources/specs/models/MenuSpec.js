@@ -14,12 +14,6 @@
       it('should have a null table number by default', function() {
         return expect(menu.get('table_number')).toBeNull();
       });
-      it('should have a null authentication token by default', function() {
-        return expect(menu.get('authentication_token')).toBeNull();
-      });
-      it('should have a url', function() {
-        return expect(menu.url()).toMatch(Backbone.Validation.patterns.url);
-      });
       it('should have a restaurant', function() {
         return expect(menu.restaurant instanceof Ti.Model.Restaurant).toBeTruthy();
       });
@@ -29,12 +23,16 @@
     });
     return describe('refetching data when id is updated', function() {
       beforeEach(function() {
-        return spyOn(menu, 'fetch').andCallThrough();
+        Ti.DB.Util.cleanDB();
+        spyOn(menu, 'fetch').andCallThrough();
+        return menu.fetch.reset();
       });
       it('should call fetch when both id and token are set', function() {
+        Ti.DB.Util.insertUser('jack', 'jacktoken');
+        Ti.DB.Util.activateUser('jacktoken');
+        spyOn(Ti.DB.Util, 'activeToken').andReturn('xxxxx');
         menu.set({
-          id: '8981a150-712c-012f-0267-58b035fd32cb',
-          authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
+          id: '8981a150-712c-012f-0267-58b035fd32cb'
         });
         return expect(menu.fetch).toHaveBeenCalled();
       });
@@ -44,18 +42,13 @@
         });
         return expect(menu.fetch).not.toHaveBeenCalled();
       });
-      it('should not call fetch when id is still null', function() {
-        menu.set({
-          authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
-        });
-        return expect(menu.fetch).not.toHaveBeenCalled();
-      });
       it('should parse new data and trigger event when the fetching succeeded', function() {
         var request;
+        Ti.DB.Util.insertUser('jack', 'jacktoken');
+        Ti.DB.Util.activateUser('jacktoken');
         spyOn(menu, 'trigger').andCallThrough();
         menu.set({
-          id: '8981a150-712c-012f-0267-58b035fd32cb',
-          authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
+          id: '8981a150-712c-012f-0267-58b035fd32cb'
         });
         request = mostRecentAjaxRequest();
         request.response({
@@ -69,10 +62,11 @@
       });
       return it('should not parse new data or trigger event when the fetch failed', function() {
         var request;
+        Ti.DB.Util.insertUser('jack', 'jacktoken');
+        Ti.DB.Util.activateUser('jacktoken');
         spyOn(menu, 'trigger').andCallThrough();
         menu.set({
-          id: '8981a150-712c-012f-0267-58b035fd32cb',
-          authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
+          id: '8981a150-712c-012f-0267-58b035fd32cb'
         });
         request = mostRecentAjaxRequest();
         request.response({

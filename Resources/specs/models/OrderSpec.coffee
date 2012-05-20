@@ -6,14 +6,22 @@ describe 'Order model', ->
     
   describe 'validations', ->
     it 'should accept when all necessary attributes are properly given', ->
-      expect(order.set {restaurant_id:1,user_id:1,authentication_token:'pWyfHDKbBuCP8hjtv6ks',status:'pending',id:1}).toBeTruthy() 
-       
+      expect(order.set {restaurant_id:1,user_id:1,status:'pending',id:1}).toBeTruthy() 
+    it 'should require a restaurant id', ->
+      expect(order.validate {restaurant_id: null}).toEqual ['restaurant_id is required']
+    it 'should require a user id', ->
+      expect(order.validate {user_id: null}).toEqual ['user_id is required']
+    it 'should require a status', ->
+      expect(order.validate {status: null}).toEqual ['status is required']
+    it 'should live without id', ->
+      expect(order.validate {id:null}).not.toEqual ['id is required']    
+    it 'should not accept unsolicited value for status', ->
+      expect(order.validate {status: 'bla'}).toEqual ["status must be one of: pending, submitted, confirmed, reopened, closed, canceled"]   
   describe 'save', ->
     it 'should save with id getting assigned in success', ->
       order.set
         restaurant_id: 1
         user_id: 1 
-        authentication_token:'pWyfHDKbBuCP8hjtv6ks' 
       order.addDish(new Ti.Model.Dish {id:1, name:'cucumber',price:'2.5'})
       order.addDish(new Ti.Model.Dish {id:2, name:'courgette',price:'4.5'})
       order.save()

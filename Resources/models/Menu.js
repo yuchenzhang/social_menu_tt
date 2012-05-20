@@ -65,9 +65,10 @@
             d = new Ti.Model.Dish({
               name: dish.name,
               price: dish.price,
-              id: dish.id
+              id: dish.id,
+              description: dish.description
             });
-            d.setPictures(dish.pictures);
+            d.parseReviews(dish.reviews);
             return d;
           }));
         } catch (e) {

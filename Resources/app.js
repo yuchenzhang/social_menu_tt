@@ -7,14 +7,14 @@
       test_enabled: false
     };
     Ti.Model = {
-      Picture: require("models/Picture"),
-      PictureCollection: require("models/PictureCollection"),
       Dish: require("models/Dish"),
       DishCollection: require("models/DishCollection"),
       Menu: require("models/Menu"),
       Restaurant: require("models/Restaurant"),
       User: require("models/User"),
-      Order: require("models/Order")
+      Order: require("models/Order"),
+      Review: require("models/Review"),
+      ReviewCollection: require("models/ReviewCollection")
     };
     Ti.DB = {
       Util: require("helper/DB"),
@@ -26,9 +26,12 @@
       TabGroup: require('controllers/TabGroupController'),
       HomeWindow: require("controllers/HomeWindowController"),
       MenuWindow: require("controllers/MenuWindowController"),
-      CouponWindow: require("controllers/CouponWindowController"),
-      MemoWindow: require("controllers/MemoWindowController"),
-      OrderWindow: require("controllers/OrderWindowController")
+      TimelineWindow: require("controllers/TimelineWindowController"),
+      TrendingWindow: require("controllers/TrendingWindowController"),
+      MessageWindow: require("controllers/MessageWindowController"),
+      ProfileWindow: require("controllers/ProfileWindowController"),
+      MenuGuideView: require("controllers/MenuGuideViewController"),
+      MenuOrderView: require("controllers/MenuOrderViewController")
     };
     if (Ti.App.test_enabled) {
       return Ti.include("specs/tests.js");

@@ -3,7 +3,7 @@ class Dish extends Backbone.Model
     id: null   
     name: null
     price: null
-    count: 0
+    description: null
   
   validation:
     id:
@@ -15,23 +15,34 @@ class Dish extends Backbone.Model
       required: true
       pattern: 'number'
     count:
-      required: true
+      required: false
       pattern: /\d+/
       min: 0
 
   parse: (data)->
     Ti.API.debug "parsing data dish: " + JSON.stringify(data)
-    if data.pictures
-      @setPictures(data.pictures)
+    if data.reviews
+      @parseReviews(data.reviews)
     {
       name: data.name,
       description: data.description,
       price: data.price
     }
  
-  setPictures: (pictures)->
-    @pictures ||= new Ti.Model.PictureCollection
-    @pictures.reset _.map pictures, (pic)->
-        {id: pic.url}
+  parseReviews: (reviews)->
+    @reviews ||= new Ti.Model.ReviewCollection
+    @reviews.reset _.map reviews, (re)=>
+        {
+          id: re.id
+          user_id: re.user.id
+          user_name: re.user.name
+          user_avatar: Ti.App.endpoint + re.user.avatar
+          dish_id: @attributes.id
+          dish_name: @attributes.name
+          dish_price: @attributes.price
+          dish_description: @attributes.description
+          comment: re.comment
+          picture: re.picture
+        }
               
 module.exports = Dish 

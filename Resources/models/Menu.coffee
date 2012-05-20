@@ -37,8 +37,9 @@ class Menu extends Backbone.Model
             name:dish.name
             price:dish.price
             id: dish.id
+            description: dish.description
           }
-          d.setPictures(dish.pictures)
+          d.parseReviews(dish.reviews)
           d
       catch e
         Ti.API.error e

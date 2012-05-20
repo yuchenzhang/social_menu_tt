@@ -14,8 +14,6 @@ describe 'User model', ->
       expect(user.get 'password').toEqual 'password'
     it 'should have an avatar by default', -> 
       expect(user.get 'avatar').toEqual 'images/icons/jack.png'
-    it 'should have a url', ->
-      expect(user.url()).toMatch Backbone.Validation.patterns.url
       
   describe "validations", ->
     it 'should not accept empty name', ->
@@ -49,7 +47,7 @@ describe 'User model', ->
             authentication_token:'pWyfHDKbBuCP8hjtv6ks'
         })
       })
-      expect(user.set).toHaveBeenCalledWith({authentication_token:'pWyfHDKbBuCP8hjtv6ks'})
+      expect(user.set).toHaveBeenCalled()
     it 'should not update token and trigger signIn:error when failed in sign in', ->
       spyOn(user, 'set')
       trigger = spyOn(user, 'trigger')

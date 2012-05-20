@@ -1,6 +1,6 @@
 (function() {
 
-  exports.cropImageForMenuView = function(url) {
+  exports.cropImage = function(url) {
     var baseImage, cropView, croppedImage;
     baseImage = Ti.UI.createImageView({
       image: url,

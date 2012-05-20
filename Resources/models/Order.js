@@ -25,7 +25,7 @@
         required: false,
         pattern: /\d+/
       },
-      retaurant_id: {
+      restaurant_id: {
         required: true,
         pattern: /\d+/
       },
@@ -34,18 +34,24 @@
         pattern: /\d+/
       },
       status: {
-        required: false,
+        required: true,
         oneOf: ['pending', 'submitted', 'confirmed', 'reopened', 'closed', 'canceled']
       }
     };
 
-    Order.prototype.initialize = function(attrs) {
-      Order.__super__.initialize.call(this, attrs);
-      return Ti.API.debug("order created:" + JSON.stringify(this.toJSON()));
+    Order.prototype.initialize = function() {
+      var _this = this;
+      Order.__super__.initialize.apply(this, arguments);
+      return this.on("change:id", function() {
+        return setInterval((function() {
+          return _this.fetch();
+        }), 5000);
+      });
     };
 
     Order.prototype.addDish = function(dish) {
       var count;
+      if (this.attributes.status !== 'pending') return;
       if (!(dish instanceof Ti.Model.Dish)) {
         throw "Order adding a dish with not recognized type";
       }
@@ -66,6 +72,7 @@
 
     Order.prototype.removeDish = function(dish) {
       var count;
+      if (this.attributes.status !== 'pending') return;
       if (!(dish instanceof Ti.Model.Dish)) {
         throw "Order adding a dish with not recognized type";
       }
@@ -96,9 +103,10 @@
       var json;
       json = {
         id: this.get('id'),
-        restaurant_id: this.get('restaurant_id'),
-        user_id: this.get('user_id'),
-        authentication_token: this.get('authentication_token')
+        restaurant_id: this.attributes.restaurant_id,
+        user_id: this.attributes.user_id,
+        authentication_token: Ti.DB.Util.activeToken(),
+        status: this.attributes.status
       };
       if (this.dishes) {
         json.dishes = this.dishes.map(function(dish) {
@@ -113,21 +121,8 @@
 
     Order.prototype.parse = function(data) {
       Ti.API.debug("parsing order " + JSON.stringify(data));
-      if (data.dishes) {
-        this.dishes || (this.dishes = new Ti.Model.DishCollection);
-        this.dishes.reset(_.map(data.dishes, function(dish) {
-          return new Ti.Model.Dish({
-            id: dish.id,
-            name: dish.name,
-            price: dish.price
-          });
-        }));
-      }
-      Ti.API.debug("dishes added");
       return {
         id: data.id,
-        restaurant_id: data.restaurant.id,
-        user_id: data.host.id,
         status: data.status
       };
     };

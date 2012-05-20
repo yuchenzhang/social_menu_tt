@@ -15,7 +15,7 @@
       id: null,
       name: null,
       price: null,
-      count: 0
+      description: null
     };
 
     Dish.prototype.validation = {
@@ -31,7 +31,7 @@
         pattern: 'number'
       },
       count: {
-        required: true,
+        required: false,
         pattern: /\d+/,
         min: 0
       }
@@ -39,7 +39,7 @@
 
     Dish.prototype.parse = function(data) {
       Ti.API.debug("parsing data dish: " + JSON.stringify(data));
-      if (data.pictures) this.setPictures(data.pictures);
+      if (data.reviews) this.parseReviews(data.reviews);
       return {
         name: data.name,
         description: data.description,
@@ -47,11 +47,21 @@
       };
     };
 
-    Dish.prototype.setPictures = function(pictures) {
-      this.pictures || (this.pictures = new Ti.Model.PictureCollection);
-      return this.pictures.reset(_.map(pictures, function(pic) {
+    Dish.prototype.parseReviews = function(reviews) {
+      var _this = this;
+      this.reviews || (this.reviews = new Ti.Model.ReviewCollection);
+      return this.reviews.reset(_.map(reviews, function(re) {
         return {
-          id: pic.url
+          id: re.id,
+          user_id: re.user.id,
+          user_name: re.user.name,
+          user_avatar: Ti.App.endpoint + re.user.avatar,
+          dish_id: _this.attributes.id,
+          dish_name: _this.attributes.name,
+          dish_price: _this.attributes.price,
+          dish_description: _this.attributes.description,
+          comment: re.comment,
+          picture: re.picture
         };
       }));
     };

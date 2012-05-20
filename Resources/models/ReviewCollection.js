@@ -1,24 +1,24 @@
 (function() {
-  var Picture, PictureCollection,
+  var Review, ReviewCollection,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  Picture = require('models/Picture');
+  Review = require("models/Review");
 
-  PictureCollection = (function(_super) {
+  ReviewCollection = (function(_super) {
 
-    __extends(PictureCollection, _super);
+    __extends(ReviewCollection, _super);
 
-    function PictureCollection() {
-      PictureCollection.__super__.constructor.apply(this, arguments);
+    function ReviewCollection() {
+      ReviewCollection.__super__.constructor.apply(this, arguments);
     }
 
-    PictureCollection.prototype.model = Picture;
+    ReviewCollection.prototype.model = Review;
 
-    return PictureCollection;
+    return ReviewCollection;
 
   })(Backbone.Collection);
 
-  module.exports = PictureCollection;
+  module.exports = ReviewCollection;
 
 }).call(this);

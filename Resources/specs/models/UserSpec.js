@@ -21,11 +21,8 @@
       it('should have an assigned password', function() {
         return expect(user.get('password')).toEqual('password');
       });
-      it('should have an avatar by default', function() {
+      return it('should have an avatar by default', function() {
         return expect(user.get('avatar')).toEqual('images/icons/jack.png');
-      });
-      return it('should have a url', function() {
-        return expect(user.url()).toMatch(Backbone.Validation.patterns.url);
       });
     });
     describe("validations", function() {
@@ -80,9 +77,7 @@
             authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
           })
         });
-        return expect(user.set).toHaveBeenCalledWith({
-          authentication_token: 'pWyfHDKbBuCP8hjtv6ks'
-        });
+        return expect(user.set).toHaveBeenCalled();
       });
       return it('should not update token and trigger signIn:error when failed in sign in', function() {
         var request, trigger;

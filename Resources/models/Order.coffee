@@ -11,21 +11,24 @@ class Order extends Backbone.Model
     id:
       required: false
       pattern: /\d+/
-    retaurant_id:
+    restaurant_id:
       required: true
       pattern: /\d+/
     user_id:
       required: true
       pattern: /\d+/
     status:
-      required: false
+      required: true
       oneOf: ['pending', 'submitted', 'confirmed', 'reopened', 'closed', 'canceled']
   
-  initialize: (attrs)->
-    super attrs
-    Ti.API.debug "order created:" + JSON.stringify @toJSON()
-        
+  initialize: ->
+    super
+    @on "change:id", =>
+      setInterval (=>
+        @fetch()),5000
+           
   addDish: (dish)->
+    return if @attributes.status != 'pending'
     throw "Order adding a dish with not recognized type" unless dish instanceof Ti.Model.Dish
     @dishes ||= new Ti.Model.DishCollection
     if dish.get('count') > 0 
@@ -35,8 +38,9 @@ class Order extends Backbone.Model
       @dishes.add dish
       dish.set {count:1}
     @trigger 'change_dish:'+dish.id
-  
+    
   removeDish: (dish)->
+    return if @attributes.status != 'pending'
     throw "Order adding a dish with not recognized type" unless dish instanceof Ti.Model.Dish
     if dish.get('count') == 1
       dish.set {count: 0}
@@ -55,9 +59,10 @@ class Order extends Backbone.Model
   toJSON: ->
     json = {
       id: @get 'id'
-      restaurant_id: @get 'restaurant_id'
-      user_id: @get 'user_id'
-      authentication_token: @get 'authentication_token'
+      restaurant_id: @attributes.restaurant_id
+      user_id: @attributes.user_id
+      authentication_token: Ti.DB.Util.activeToken()
+      status: @attributes.status
     }
     if @dishes
       json.dishes = @dishes.map (dish)->
@@ -66,15 +71,8 @@ class Order extends Backbone.Model
   
   parse: (data)->
     Ti.API.debug "parsing order " + JSON.stringify data
-    if data.dishes
-      @dishes ||= new Ti.Model.DishCollection
-      @dishes.reset _.map data.dishes, (dish)->
-        new Ti.Model.Dish {id:dish.id,name:dish.name,price:dish.price}
-    Ti.API.debug "dishes added"
     {
       id:data.id
-      restaurant_id:data.restaurant.id
-      user_id:data.host.id
       status: data.status
     }    
 module.exports = Order  

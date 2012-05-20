@@ -4,32 +4,46 @@
   TabGroupController = (function() {
 
     function TabGroupController(user) {
-      var coupon_tab, coupon_window, home_tab, home_window, memo_tab, memo_window, menu, tab_group;
+      var home_tab, home_window, menu, message_tab, message_window, profile_tab, profile_window, tab_group, timeline_tab, timeline_window, trending_tab, trending_window;
       tab_group = Ti.UI.createTabGroup({
         titleid: 'tab_group'
       });
       menu = new Ti.Model.Menu;
       home_window = (new Ti.Controller.HomeWindow(menu, user)).window;
-      coupon_window = (new Ti.Controller.CouponWindow(menu)).window;
-      memo_window = (new Ti.Controller.MemoWindow(menu)).window;
-      memo_tab = Ti.UI.createTab({
-        titleid: "memo_tab",
-        window: memo_window
+      timeline_window = (new Ti.Controller.TimelineWindow(user)).window;
+      trending_window = (new Ti.Controller.TrendingWindow(user)).window;
+      message_window = (new Ti.Controller.MessageWindow(user)).window;
+      profile_window = (new Ti.Controller.ProfileWindow(user)).window;
+      timeline_tab = Ti.UI.createTab({
+        window: timeline_window,
+        icon: "images/tabs/light_book@2x.png"
       });
-      memo_window.containingTab = memo_tab;
-      tab_group.addTab(memo_tab);
+      timeline_window.containingTab = timeline_tab;
+      tab_group.addTab(timeline_tab);
+      trending_tab = Ti.UI.createTab({
+        window: trending_window,
+        icon: "images/tabs/light_star@2x.png"
+      });
+      trending_window.containingTab = trending_tab;
+      tab_group.addTab(trending_tab);
       home_tab = Ti.UI.createTab({
-        titleid: "home_tab",
-        window: home_window
+        window: home_window,
+        icon: "images/tabs/light_home@2x.png"
       });
       home_window.containingTab = home_tab;
       tab_group.addTab(home_tab);
-      coupon_tab = Ti.UI.createTab({
-        titleid: "coupon_tab",
-        window: coupon_window
+      message_tab = Ti.UI.createTab({
+        window: message_window,
+        icon: "images/tabs/light_mail@2x.png"
       });
-      coupon_window.containingTab = coupon_tab;
-      tab_group.addTab(coupon_tab);
+      message_window.containingTab = message_tab;
+      tab_group.addTab(message_tab);
+      profile_tab = Ti.UI.createTab({
+        window: profile_window,
+        icon: "images/tabs/light_pegman@2x.png"
+      });
+      profile_window.containingTab = profile_tab;
+      tab_group.addTab(profile_tab);
       tab_group.setActiveTab(home_tab);
       tab_group.open({
         transition: Titanium.UI.iPhone && Titanium.UI.iPhone.AnimationStyle.FLIP_FROM_LEFT

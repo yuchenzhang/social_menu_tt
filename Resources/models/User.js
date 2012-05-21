@@ -18,10 +18,6 @@
     };
 
     User.prototype.validation = {
-      name: {
-        required: true,
-        msg: 'Name is required'
-      },
       email: {
         required: true,
         pattern: 'email'
@@ -34,17 +30,21 @@
     User.prototype.initialize = function() {
       var _this = this;
       User.__super__.initialize.apply(this, arguments);
-      this.on('validated:invalid', function(model, error, options) {
-        return Ti.API.error("User model invalid:" + JSON.stringify(error));
+      this.on('validated:invalid', function(model, invalid_attrs) {
+        Ti.API.error("User model invalid:" + JSON.stringify(invalid_attrs));
+        return _.each(invalid_attrs, function(attr) {
+          return _this.trigger('invalid:' + attr);
+        });
       });
       return this.on('signIn:error', function(model, resp) {
         return Ti.API.debug("sign in error");
       });
     };
 
-    User.prototype.signIn = function() {
+    User.prototype.signIn = function(opts) {
       var options,
         _this = this;
+      if (opts) this.set(opts);
       Ti.API.debug("sign in with " + JSON.stringify(this));
       if (!this.isValid(true)) return false;
       options = {
@@ -60,12 +60,13 @@
           Ti.API.debug('sign in succeeded with resp: ' + JSON.stringify(resp));
           Ti.DB.Util.insertUser(_this.get('name'), resp.authentication_token);
           Ti.DB.Util.activateUser(resp.authentication_token);
-          return _this.set({
+          _this.set({
             authentication_token: resp.authentication_token,
             avatar: Ti.App.endpoint + resp.avatar,
             name: resp.name,
             id: resp.id
           });
+          return _this.trigger('signIn:success');
         },
         error: function(model, resp) {
           return _this.trigger('signIn:error', _this, resp);

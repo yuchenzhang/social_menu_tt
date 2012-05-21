@@ -393,14 +393,11 @@
       row.add(review_bar);
       this.order.on("change:status", function() {
         var overlay;
-        Ti.API.debug("status chagned to " + _this.order.attributes.status);
-        Ti.API.debug("ordered " + dish.attributes.name + " " + dish.attributes.count);
         if (_this.order.attributes.status === "confirmed" && parseInt(dish.attributes.count) > 0) {
           Ti.API.debug("making the overlay");
           overlay = Ti.UI.createImageView({
             image: "images/icons/dark_camera@2x.png",
             opacity: 0.8,
-            width: 208,
             height: 'auto'
           });
           return image.add(overlay);

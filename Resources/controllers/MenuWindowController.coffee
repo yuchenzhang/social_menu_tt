@@ -287,14 +287,11 @@ class MenuWindowController
     row.add review_bar
     
     @order.on "change:status", =>
-      Ti.API.debug "status chagned to " + @order.attributes.status
-      Ti.API.debug "ordered " + dish.attributes.name + " " + dish.attributes.count
       if @order.attributes.status == "confirmed" and parseInt(dish.attributes.count) > 0
         Ti.API.debug "making the overlay"
         overlay = Ti.UI.createImageView
           image: "images/icons/dark_camera@2x.png"
           opacity: 0.8
-          width: 208
           height: 'auto'
         image.add overlay              
     return row 

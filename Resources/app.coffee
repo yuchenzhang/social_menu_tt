@@ -32,6 +32,10 @@ init = ->
     ProfileWindow: require "controllers/ProfileWindowController"
     MenuGuideView: require "controllers/MenuGuideViewController"
     MenuOrderView: require "controllers/MenuOrderViewController"
+  
+  Ti.View =
+    BaseView: require 'views/BaseView'
+    UserFormView: require 'views/UserFormView'
          
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"

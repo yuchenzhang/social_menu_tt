@@ -10,7 +10,7 @@
 
   Ti.include('../lib/mock-ajax.js');
 
-  Ti.include('models/OrderSpec.js');
+  Ti.include('views/BaseViewSpec.js');
 
   jasmine.getEnv().addReporter(new jasmine.TitaniumReporter());
 

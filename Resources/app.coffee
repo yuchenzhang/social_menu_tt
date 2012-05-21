@@ -36,6 +36,8 @@ init = ->
   Ti.View =
     BaseView: require 'views/BaseView'
     UserFormView: require 'views/UserFormView'
+    DishRowView: require 'views/DishRowView'
+    DishReviewView: require 'views/DishReviewView'
          
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"

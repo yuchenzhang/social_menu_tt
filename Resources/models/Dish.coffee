@@ -4,6 +4,7 @@ class Dish extends Backbone.Model
     name: null
     price: null
     description: null
+    count: 0
   
   validation:
     id:
@@ -15,7 +16,7 @@ class Dish extends Backbone.Model
       required: true
       pattern: 'number'
     count:
-      required: false
+      required: true
       pattern: /\d+/
       min: 0
 
@@ -44,5 +45,14 @@ class Dish extends Backbone.Model
           comment: re.comment
           picture: re.picture
         }
-              
+  
+  minus: ->
+    @set {count: @attributes.count - 1}
+ 
+  plus: ->
+    @set {count: @attributes.count + 1}
+    
+  isOrdered: ->
+    return @attributes.count > 0
+                 
 module.exports = Dish 

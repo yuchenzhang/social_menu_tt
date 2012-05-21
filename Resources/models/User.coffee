@@ -31,7 +31,7 @@ class User extends Backbone.Model
         Ti.DB.Util.insertUser @get('name'), resp.authentication_token
         Ti.DB.Util.activateUser resp.authentication_token
         @set {authentication_token: resp.authentication_token, avatar: Ti.App.endpoint + resp.avatar, name: resp.name, id:resp.id}
-        @trigger 'signIn:success'
+        @trigger 'signIn:success', @
       error: (model,resp)=>
         @trigger 'signIn:error', @, resp
     return (this.sync || Backbone.sync).call(this, 'create', this, options)  

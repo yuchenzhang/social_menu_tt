@@ -66,7 +66,7 @@
             name: resp.name,
             id: resp.id
           });
-          return _this.trigger('signIn:success');
+          return _this.trigger('signIn:success', _this);
         },
         error: function(model, resp) {
           return _this.trigger('signIn:error', _this, resp);

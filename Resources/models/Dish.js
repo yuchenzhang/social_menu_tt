@@ -15,7 +15,8 @@
       id: null,
       name: null,
       price: null,
-      description: null
+      description: null,
+      count: 0
     };
 
     Dish.prototype.validation = {
@@ -31,7 +32,7 @@
         pattern: 'number'
       },
       count: {
-        required: false,
+        required: true,
         pattern: /\d+/,
         min: 0
       }
@@ -64,6 +65,22 @@
           picture: re.picture
         };
       }));
+    };
+
+    Dish.prototype.minus = function() {
+      return this.set({
+        count: this.attributes.count - 1
+      });
+    };
+
+    Dish.prototype.plus = function() {
+      return this.set({
+        count: this.attributes.count + 1
+      });
+    };
+
+    Dish.prototype.isOrdered = function() {
+      return this.attributes.count > 0;
     };
 
     return Dish;

@@ -35,7 +35,9 @@
     };
     Ti.View = {
       BaseView: require('views/BaseView'),
-      UserFormView: require('views/UserFormView')
+      UserFormView: require('views/UserFormView'),
+      DishRowView: require('views/DishRowView'),
+      DishReviewView: require('views/DishReviewView')
     };
     if (Ti.App.test_enabled) {
       return Ti.include("specs/tests.js");

@@ -7,10 +7,10 @@
       this.menu = menu;
       this.user = user;
       this.order = new Ti.Model.Order({
-        restaurant_id: this.menu.restaurant.get('id'),
-        user_id: this.user.get('id'),
+        user_id: this.user.attributes.id,
+        restaurant_id: this.menu.restaurant.attributes.id,
         status: 'pending'
-      });
+      }, menu.dishes);
       this.window = Ti.UI.createWindow({
         title: 'SocialMenu menupage',
         backgroundImage: "images/wooden_floor.jpg",
@@ -57,7 +57,7 @@
         if (_this.order_view) {
           return _this.order_view.show();
         } else {
-          _this.order_view = (new Ti.Controller.MenuOrderView(_this.order)).view;
+          _this.order_view = (new Ti.View.OrderView(_this.order)).render();
           return _this.window.add(_this.order_view);
         }
       });

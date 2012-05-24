@@ -2,7 +2,10 @@ class MenuWindowController
   constructor: (menu, user)->
     @menu = menu
     @user = user
-    @order = new Ti.Model.Order {restaurant_id:@menu.restaurant.get('id'),user_id:@user.get('id'), status: 'pending'}
+    @order = new Ti.Model.Order {
+      user_id:@user.attributes.id
+      restaurant_id:@menu.restaurant.attributes.id
+      status:'pending'},menu.dishes
     @window = Ti.UI.createWindow
       title: 'SocialMenu menupage'
       backgroundImage: "images/wooden_floor.jpg"
@@ -38,7 +41,7 @@ class MenuWindowController
       if @order_view
         @order_view.show()
       else
-        @order_view = (new Ti.Controller.MenuOrderView(@order)).view
+        @order_view = (new Ti.View.OrderView(@order)).render()
         @window.add @order_view
     guide_btn = Ti.UI.createButton
       color:"#fff"

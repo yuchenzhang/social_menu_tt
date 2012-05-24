@@ -1,5 +1,6 @@
 (function() {
   var Order,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
@@ -8,6 +9,7 @@
     __extends(Order, _super);
 
     function Order() {
+      this.orderDish = __bind(this.orderDish, this);
       Order.__super__.constructor.apply(this, arguments);
     }
 
@@ -19,6 +21,10 @@
       user_id: null,
       status: null
     };
+
+    Order.prototype.orderable_dishes = null;
+
+    Order.prototype.dishes = null;
 
     Order.prototype.validation = {
       id: {
@@ -39,62 +45,57 @@
       }
     };
 
-    Order.prototype.initialize = function() {
+    Order.prototype.initialize = function(attrs, dishes) {
       var _this = this;
-      Order.__super__.initialize.apply(this, arguments);
-      return this.on("change:id", function() {
-        return setInterval((function() {
-          return _this.fetch();
-        }), 5000);
+      Order.__super__.initialize.call(this, attrs);
+      if (!(dishes instanceof Ti.Model.DishCollection)) {
+        throw new Error('must assign a valid dish collection');
+      }
+      this.orderable_dishes = dishes;
+      this.orderable_dishes.each(function(dish) {
+        return dish.on('change:count', _this.orderDish);
+      });
+      this.on("change:id", function() {
+        if (_this.attributes.id) {
+          return _this.sync_id = setInterval((function() {
+            return _this.fetch();
+          }), 5000);
+        }
+      });
+      return this.on("change:status", function() {
+        if (_this.attributes.status === 'submitted') {
+          _this.orderable_dishes.each(function(dish) {
+            return dish.set({
+              orderable: false
+            });
+          });
+        }
+        if (_this.attributes.status === 'confirmed') {
+          if (_this.sync_id) clearInterval(_this.sync_id);
+          return _this.dishes.each(function(dish) {
+            return dish.reviews.at(0).set({
+              rewritable: true
+            });
+          });
+        }
       });
     };
 
-    Order.prototype.addDish = function(dish) {
-      var count;
-      if (this.attributes.status !== 'pending') return;
-      if (!(dish instanceof Ti.Model.Dish)) {
-        throw "Order adding a dish with not recognized type";
-      }
-      this.dishes || (this.dishes = new Ti.Model.DishCollection);
-      if (dish.get('count') > 0) {
-        count = dish.get('count');
-        dish.set({
-          count: count + 1
-        });
+    Order.prototype.orderDish = function(dish) {
+      if (dish.attributes.count > 0) {
+        this.dishes || (this.dishes = new Ti.Model.DishCollection);
+        if (!this.dishes.get(dish)) this.dishes.add(dish);
       } else {
-        this.dishes.add(dish);
-        dish.set({
-          count: 1
-        });
+        if (this.dishes.get(dish)) this.dishes.remove(dish);
       }
-      return this.trigger('change_dish:' + dish.id);
-    };
-
-    Order.prototype.removeDish = function(dish) {
-      var count;
-      if (this.attributes.status !== 'pending') return;
-      if (!(dish instanceof Ti.Model.Dish)) {
-        throw "Order adding a dish with not recognized type";
-      }
-      if (dish.get('count') === 1) {
-        dish.set({
-          count: 0
-        });
-        this.dishes.remove(dish);
-      } else {
-        count = dish.get('count');
-        dish.set({
-          count: count - 1
-        });
-      }
-      return this.trigger('change_dish:' + dish.id);
+      return this.trigger('change:dishes');
     };
 
     Order.prototype.totalPrice = function() {
       var total;
       total = 0;
       this.dishes.each(function(dish) {
-        return total += (parseFloat(dish.get('price'))) * dish.get('count');
+        return total += (parseFloat(dish.attributes.price)) * dish.attributes.count;
       });
       return total;
     };
@@ -111,8 +112,8 @@
       if (this.dishes) {
         json.dishes = this.dishes.map(function(dish) {
           return {
-            id: dish.get('id'),
-            count: dish.get('count')
+            id: dish.attributes.id,
+            count: dish.attributes.count
           };
         });
       }
@@ -123,6 +124,8 @@
       Ti.API.debug("parsing order " + JSON.stringify(data));
       return {
         id: data.id,
+        restaurant_id: data.restaurant_id || data.restaurant.id,
+        user_id: data.user_id || data.user.id,
         status: data.status
       };
     };

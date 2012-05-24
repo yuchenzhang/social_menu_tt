@@ -23,6 +23,8 @@
 
     DishReviewView.prototype.image = null;
 
+    DishReviewView.prototype.comment = null;
+
     DishReviewView.prototype.render = function() {
       this.review_bar = Ti.UI.createView({
         width: '100%',
@@ -78,7 +80,7 @@
         top: 185,
         left: 20
       }));
-      this.review_bar.add(Ti.UI.createLabel({
+      this.comment = Ti.UI.createLabel({
         text: this.model.attributes.comment,
         color: "#000",
         font: {
@@ -90,7 +92,8 @@
         left: 43,
         width: 240,
         height: 54
-      }));
+      });
+      this.review_bar.add(this.comment);
       this.review_bar.add(Ti.UI.createImageView({
         image: 'images/icons/heart.png',
         width: 18,
@@ -116,11 +119,15 @@
     };
 
     DishReviewView.prototype.tappableOverlay = function() {
-      var overlay;
+      var overlay,
+        _this = this;
       overlay = Ti.UI.createImageView({
         image: "images/icons/dark_camera@2x.png",
         opacity: 0.8,
         height: 'auto'
+      });
+      overlay.addEventListener('click', function() {
+        return (new Ti.View.DishReviewComposeView(_this.model)).render();
       });
       return this.image.add(overlay);
     };

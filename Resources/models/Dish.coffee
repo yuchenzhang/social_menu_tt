@@ -5,6 +5,7 @@ class Dish extends Backbone.Model
     price: null
     description: null
     count: 0
+    orderable: true
   
   validation:
     id:
@@ -47,10 +48,10 @@ class Dish extends Backbone.Model
         }
   
   minus: ->
-    @set {count: @attributes.count - 1}
+    @set {count: @attributes.count - 1} if @attributes.orderable
  
   plus: ->
-    @set {count: @attributes.count + 1}
+    @set {count: @attributes.count + 1} if @attributes.orderable
     
   isOrdered: ->
     return @attributes.count > 0

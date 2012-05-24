@@ -16,7 +16,8 @@
       name: null,
       price: null,
       description: null,
-      count: 0
+      count: 0,
+      orderable: true
     };
 
     Dish.prototype.validation = {
@@ -68,15 +69,19 @@
     };
 
     Dish.prototype.minus = function() {
-      return this.set({
-        count: this.attributes.count - 1
-      });
+      if (this.attributes.orderable) {
+        return this.set({
+          count: this.attributes.count - 1
+        });
+      }
     };
 
     Dish.prototype.plus = function() {
-      return this.set({
-        count: this.attributes.count + 1
-      });
+      if (this.attributes.orderable) {
+        return this.set({
+          count: this.attributes.count + 1
+        });
+      }
     };
 
     Dish.prototype.isOrdered = function() {

@@ -1,7 +1,12 @@
-class MenuOrderViewController
-  constructor: (order)->
-    @order = order
-    Ti.API.debug 'order created with status ' + @order.attributes.status
+BaseView = require 'views/BaseView'
+class OrderView extends BaseView
+  events:
+    'change:dishes':'updateList'
+  
+  view:null
+  list:null
+  
+  render: ->
     @view = Ti.UI.createView
       width: 300
       height: 400
@@ -9,7 +14,7 @@ class MenuOrderViewController
       opacity: 0.8
       top: 5
     
-    data = @order.dishes.map (dish)->
+    data = @model.dishes.map (dish)->
       {title:dish.attributes.name + ' x ' + dish.attributes.count} 
     @list = Ti.UI.createTableView
       data: data
@@ -17,11 +22,7 @@ class MenuOrderViewController
       height: 350
       width: 280
       top: 2
-    @view.add @list
-    @order.dishes.on 'change', =>
-      data = @order.dishes.map (dish)->
-        {title:dish.attributes.name + ' x ' + dish.attributes.count}
-      @list.setData data
+    @view.add @list  
     send_btn = Ti.UI.createButton
       color:"#fff"
       backgroundImage:'images/BUTT_grn_off.png'
@@ -35,7 +36,7 @@ class MenuOrderViewController
       bottom: 10
     @view.add send_btn
     send_btn.addEventListener 'click', =>
-      @order.save({status:'submitted'})
+      @model.save({status:'submitted'})
       send_btn.title = 'Sent'
       send_btn.enabled = false
     back_btn = Ti.UI.createButton
@@ -52,5 +53,12 @@ class MenuOrderViewController
     @view.add back_btn 
     back_btn.addEventListener 'click', =>
       @view.hide()
-          
-module.exports = MenuOrderViewController
+    return @view
+    
+  updateList: =>
+    data = @model.dishes.map (dish)->
+      {title:dish.attributes.name + ' x ' + dish.attributes.count}
+    @list.setData data    
+
+    
+module.exports = OrderView

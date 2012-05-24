@@ -9,6 +9,7 @@ class Review extends Backbone.Model
     dish_price: null
     dish_description:null
     comment: null
+    rewritable:false
   
   validation:
     id:

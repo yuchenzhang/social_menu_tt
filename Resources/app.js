@@ -3,7 +3,7 @@
 
   init = function() {
     Ti.App = {
-      endpoint: "http://10.0.1.2:8000",
+      endpoint: "http://192.168.1.12:8000",
       test_enabled: false
     };
     Ti.Model = {
@@ -29,15 +29,15 @@
       TimelineWindow: require("controllers/TimelineWindowController"),
       TrendingWindow: require("controllers/TrendingWindowController"),
       MessageWindow: require("controllers/MessageWindowController"),
-      ProfileWindow: require("controllers/ProfileWindowController"),
-      MenuGuideView: require("controllers/MenuGuideViewController"),
-      MenuOrderView: require("controllers/MenuOrderViewController")
+      ProfileWindow: require("controllers/ProfileWindowController")
     };
     Ti.View = {
       BaseView: require('views/BaseView'),
       UserFormView: require('views/UserFormView'),
       DishRowView: require('views/DishRowView'),
-      DishReviewView: require('views/DishReviewView')
+      DishReviewView: require('views/DishReviewView'),
+      OrderView: require('views/OrderView'),
+      DishReviewComposeView: require('views/DishReviewComposeView')
     };
     if (Ti.App.test_enabled) {
       return Ti.include("specs/tests.js");

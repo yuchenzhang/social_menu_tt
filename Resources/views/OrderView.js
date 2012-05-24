@@ -1,13 +1,31 @@
 (function() {
-  var MenuOrderViewController;
+  var BaseView, OrderView,
+    __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
+    __hasProp = Object.prototype.hasOwnProperty,
+    __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
 
-  MenuOrderViewController = (function() {
+  BaseView = require('views/BaseView');
 
-    function MenuOrderViewController(order) {
+  OrderView = (function(_super) {
+
+    __extends(OrderView, _super);
+
+    function OrderView() {
+      this.updateList = __bind(this.updateList, this);
+      OrderView.__super__.constructor.apply(this, arguments);
+    }
+
+    OrderView.prototype.events = {
+      'change:dishes': 'updateList'
+    };
+
+    OrderView.prototype.view = null;
+
+    OrderView.prototype.list = null;
+
+    OrderView.prototype.render = function() {
       var back_btn, data, send_btn,
         _this = this;
-      this.order = order;
-      Ti.API.debug('order created with status ' + this.order.attributes.status);
       this.view = Ti.UI.createView({
         width: 300,
         height: 400,
@@ -15,7 +33,7 @@
         opacity: 0.8,
         top: 5
       });
-      data = this.order.dishes.map(function(dish) {
+      data = this.model.dishes.map(function(dish) {
         return {
           title: dish.attributes.name + ' x ' + dish.attributes.count
         };
@@ -28,14 +46,6 @@
         top: 2
       });
       this.view.add(this.list);
-      this.order.dishes.on('change', function() {
-        data = _this.order.dishes.map(function(dish) {
-          return {
-            title: dish.attributes.name + ' x ' + dish.attributes.count
-          };
-        });
-        return _this.list.setData(data);
-      });
       send_btn = Ti.UI.createButton({
         color: "#fff",
         backgroundImage: 'images/BUTT_grn_off.png',
@@ -54,7 +64,7 @@
       });
       this.view.add(send_btn);
       send_btn.addEventListener('click', function() {
-        _this.order.save({
+        _this.model.save({
           status: 'submitted'
         });
         send_btn.title = 'Sent';
@@ -80,12 +90,23 @@
       back_btn.addEventListener('click', function() {
         return _this.view.hide();
       });
-    }
+      return this.view;
+    };
 
-    return MenuOrderViewController;
+    OrderView.prototype.updateList = function() {
+      var data;
+      data = this.model.dishes.map(function(dish) {
+        return {
+          title: dish.attributes.name + ' x ' + dish.attributes.count
+        };
+      });
+      return this.list.setData(data);
+    };
 
-  })();
+    return OrderView;
 
-  module.exports = MenuOrderViewController;
+  })(BaseView);
+
+  module.exports = OrderView;
 
 }).call(this);

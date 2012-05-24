@@ -1,21 +1,46 @@
 (function() {
 
   describe('Order model', function() {
-    var order;
+    var courgette, cucumber, dishes, order;
     order = null;
+    cucumber = new Ti.Model.Dish({
+      id: 1,
+      name: 'cucumber',
+      price: '2.5',
+      description: 'bla'
+    });
+    courgette = new Ti.Model.Dish({
+      id: 2,
+      name: 'courgette',
+      price: '4.5',
+      description: 'bla'
+    });
+    dishes = new Ti.Model.DishCollection([cucumber, courgette]);
     beforeEach(function() {
-      order = new Ti.Model.Order;
-      return jasmine.Ajax.useMock();
+      return order = new Ti.Model.Order({
+        restaurant_id: 1,
+        user_id: 1,
+        status: 'pending'
+      }, dishes);
+    });
+    describe('initialize', function() {
+      it('should assign a restaurant id', function() {
+        return expect(order.attributes.restaurant_id).toEqual(1);
+      });
+      it('should add a dish when that dishs count is plused', function() {
+        cucumber.plus();
+        cucumber.plus();
+        courgette.plus();
+        expect(order.dishes.length).toEqual(2);
+        return expect(order.totalPrice()).toEqual(9.5);
+      });
+      return it('should trigger change:dishes event when a dish is ordered', function() {
+        spyOn(order, 'trigger');
+        cucumber.plus();
+        return expect(order.trigger).toHaveBeenCalledWith('change:dishes');
+      });
     });
     describe('validations', function() {
-      it('should accept when all necessary attributes are properly given', function() {
-        return expect(order.set({
-          restaurant_id: 1,
-          user_id: 1,
-          status: 'pending',
-          id: 1
-        })).toBeTruthy();
-      });
       it('should require a restaurant id', function() {
         return expect(order.validate({
           restaurant_id: null
@@ -43,22 +68,11 @@
       });
     });
     return describe('save', function() {
+      beforeEach(function() {
+        return jasmine.Ajax.useMock();
+      });
       it('should save with id getting assigned in success', function() {
         var request;
-        order.set({
-          restaurant_id: 1,
-          user_id: 1
-        });
-        order.addDish(new Ti.Model.Dish({
-          id: 1,
-          name: 'cucumber',
-          price: '2.5'
-        }));
-        order.addDish(new Ti.Model.Dish({
-          id: 2,
-          name: 'courgette',
-          price: '4.5'
-        }));
         order.save();
         request = mostRecentAjaxRequest();
         request.response({
@@ -69,11 +83,11 @@
               id: 1,
               name: 'soho Eindhoven'
             },
-            host: {
+            user: {
               id: 1,
               name: 'jack'
             },
-            status: 'pending',
+            status: 'submitted',
             dishes: [
               {
                 name: 'cucumber',
@@ -87,8 +101,8 @@
             ]
           })
         });
-        expect(order.get('id')).toEqual(19);
-        return expect(order.get('status')).toEqual('pending');
+        expect(order.attributes.id).toEqual(19);
+        return expect(order.attributes.status).toEqual('submitted');
       });
       return it('should trigger error in failure', function() {
         var request, trigger;

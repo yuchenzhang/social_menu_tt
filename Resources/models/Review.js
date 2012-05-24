@@ -20,7 +20,8 @@
       dish_name: null,
       dish_price: null,
       dish_description: null,
-      comment: null
+      comment: null,
+      rewritable: false
     };
 
     Review.prototype.validation = {

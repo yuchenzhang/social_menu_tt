@@ -7,6 +7,9 @@ class Order extends Backbone.Model
     user_id: null
     status: null
   
+  orderable_dishes: null
+  dishes: null
+  
   validation:
     id:
       required: false
@@ -21,39 +24,35 @@ class Order extends Backbone.Model
       required: true
       oneOf: ['pending', 'submitted', 'confirmed', 'reopened', 'closed', 'canceled']
   
-  initialize: ->
-    super
+  initialize: (attrs,dishes)->
+    super attrs
+    throw new Error 'must assign a valid dish collection' unless dishes instanceof Ti.Model.DishCollection
+    @orderable_dishes = dishes
+    @orderable_dishes.each (dish)=> 
+      dish.on 'change:count', @orderDish      
     @on "change:id", =>
-      setInterval (=>
-        @fetch()),5000
-           
-  addDish: (dish)->
-    return if @attributes.status != 'pending'
-    throw "Order adding a dish with not recognized type" unless dish instanceof Ti.Model.Dish
-    @dishes ||= new Ti.Model.DishCollection
-    if dish.get('count') > 0 
-      count = dish.get 'count'
-      dish.set {count:count + 1}
-    else
-      @dishes.add dish
-      dish.set {count:1}
-    @trigger 'change_dish:'+dish.id
-    
-  removeDish: (dish)->
-    return if @attributes.status != 'pending'
-    throw "Order adding a dish with not recognized type" unless dish instanceof Ti.Model.Dish
-    if dish.get('count') == 1
-      dish.set {count: 0}
-      @dishes.remove dish
-    else
-      count =  dish.get 'count'
-      dish.set {count: count - 1}
-    @trigger 'change_dish:'+dish.id
+      @sync_id = setInterval (=>@fetch()),5000 if @attributes.id
+    @on "change:status", =>
+      if @attributes.status == 'submitted'
+        @orderable_dishes.each (dish)->
+          dish.set {orderable: false}
+      if @attributes.status == 'confirmed'
+        clearInterval @sync_id if @sync_id
+        @dishes.each (dish)->
+          dish.reviews.at(0).set {rewritable: true}
   
+  orderDish: (dish)=>
+    if dish.attributes.count > 0
+      @dishes ||= new Ti.Model.DishCollection
+      @dishes.add dish unless @dishes.get dish
+    else
+      @dishes.remove dish if @dishes.get dish
+    @trigger 'change:dishes'
+               
   totalPrice: ->
     total = 0
     @dishes.each (dish)->
-      total += (parseFloat dish.get 'price') * dish.get('count')
+      total += (parseFloat dish.attributes.price) * dish.attributes.count
     return total  
   
   toJSON: ->
@@ -66,13 +65,16 @@ class Order extends Backbone.Model
     }
     if @dishes
       json.dishes = @dishes.map (dish)->
-        {id:dish.get('id'), count: dish.get('count')} 
+        {id:dish.attributes.id, count: dish.attributes.count} 
     return json
   
   parse: (data)->
     Ti.API.debug "parsing order " + JSON.stringify data
     {
       id:data.id
+      restaurant_id: data.restaurant_id || data.restaurant.id
+      user_id: data.user_id || data.user.id
       status: data.status
-    }    
+    }
+        
 module.exports = Order  

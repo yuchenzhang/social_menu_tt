@@ -47,7 +47,7 @@ class Menu extends Backbone.Model
     {
       table_number: data.table_number
     }
-                   
+                     
 module.exports = Menu
 
 

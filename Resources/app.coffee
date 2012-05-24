@@ -1,7 +1,7 @@
 init = ->  
   Ti.App = 
     # endpoint: "http://localhost:8000"
-    endpoint: "http://10.0.1.2:8000"
+    endpoint: "http://192.168.1.12:8000"
     # endpoint: "http://192.168.1.5:8000"
     test_enabled: false
   
@@ -30,14 +30,14 @@ init = ->
     TrendingWindow: require "controllers/TrendingWindowController"
     MessageWindow: require "controllers/MessageWindowController"
     ProfileWindow: require "controllers/ProfileWindowController"
-    MenuGuideView: require "controllers/MenuGuideViewController"
-    MenuOrderView: require "controllers/MenuOrderViewController"
   
   Ti.View =
     BaseView: require 'views/BaseView'
     UserFormView: require 'views/UserFormView'
     DishRowView: require 'views/DishRowView'
     DishReviewView: require 'views/DishReviewView'
+    OrderView: require 'views/OrderView'
+    DishReviewComposeView: require 'views/DishReviewComposeView'
          
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"

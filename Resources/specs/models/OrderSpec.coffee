@@ -1,12 +1,27 @@
 describe 'Order model', ->
   order = null
+  cucumber = new Ti.Model.Dish {id:1, name:'cucumber',price:'2.5', description: 'bla'}
+  courgette = new Ti.Model.Dish {id:2, name:'courgette',price:'4.5', description: 'bla'}
+  dishes = new Ti.Model.DishCollection [cucumber,courgette]
+  
   beforeEach ->
-    order = new Ti.Model.Order
-    jasmine.Ajax.useMock()
-    
+    order = new Ti.Model.Order {restaurant_id:1,user_id:1,status:'pending'}, dishes
+  
+  describe 'initialize', ->
+    it 'should assign a restaurant id', ->
+      expect(order.attributes.restaurant_id).toEqual 1
+    it 'should add a dish when that dishs count is plused', ->
+      cucumber.plus()
+      cucumber.plus()
+      courgette.plus()
+      expect(order.dishes.length).toEqual 2
+      expect(order.totalPrice()).toEqual 9.5
+    it 'should trigger change:dishes event when a dish is ordered', ->
+      spyOn order, 'trigger'
+      cucumber.plus()
+      expect(order.trigger).toHaveBeenCalledWith 'change:dishes'
+  
   describe 'validations', ->
-    it 'should accept when all necessary attributes are properly given', ->
-      expect(order.set {restaurant_id:1,user_id:1,status:'pending',id:1}).toBeTruthy() 
     it 'should require a restaurant id', ->
       expect(order.validate {restaurant_id: null}).toEqual ['restaurant_id is required']
     it 'should require a user id', ->
@@ -17,13 +32,12 @@ describe 'Order model', ->
       expect(order.validate {id:null}).not.toEqual ['id is required']    
     it 'should not accept unsolicited value for status', ->
       expect(order.validate {status: 'bla'}).toEqual ["status must be one of: pending, submitted, confirmed, reopened, closed, canceled"]   
+  
+  
   describe 'save', ->
+    beforeEach ->
+      jasmine.Ajax.useMock()
     it 'should save with id getting assigned in success', ->
-      order.set
-        restaurant_id: 1
-        user_id: 1 
-      order.addDish(new Ti.Model.Dish {id:1, name:'cucumber',price:'2.5'})
-      order.addDish(new Ti.Model.Dish {id:2, name:'courgette',price:'4.5'})
       order.save()
       request = mostRecentAjaxRequest()
       request.response({
@@ -33,18 +47,18 @@ describe 'Order model', ->
             restaurant:
               id:1
               name:'soho Eindhoven'
-            host:
+            user:
               id:1
               name:'jack'
-            status: 'pending'
+            status: 'submitted'
             dishes:[
               {name:'cucumber',price:'2.5',id:1},
               {name:'courgette',price:'4.5',id:2}
             ]
         })
       })
-      expect(order.get 'id').toEqual 19
-      expect(order.get 'status').toEqual 'pending'
+      expect(order.attributes.id).toEqual 19
+      expect(order.attributes.status).toEqual 'submitted'
     it 'should trigger error in failure', ->
       trigger = spyOn(order, 'trigger').andCallThrough()
       order.save()
@@ -56,3 +70,10 @@ describe 'Order model', ->
         })
       })
       expect(trigger.mostRecentCall.args[0]).toEqual 'error'
+
+
+
+
+
+
+

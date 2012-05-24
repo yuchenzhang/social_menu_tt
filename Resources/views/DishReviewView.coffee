@@ -5,6 +5,7 @@ class DishReviewView extends BaseView
     
   review_bar:null
   image:null
+  comment:null
   
   render: ->
     @review_bar = Ti.UI.createView
@@ -48,7 +49,7 @@ class DishReviewView extends BaseView
       height: 18
       top: 185
       left: 20
-    @review_bar.add Ti.UI.createLabel
+    @comment = Ti.UI.createLabel
       text: @model.attributes.comment
       color: "#000"
       font: {fontSize: 12, fontStyle: 'italic'}
@@ -57,6 +58,7 @@ class DishReviewView extends BaseView
       left: 43
       width: 240
       height: 54
+    @review_bar.add @comment
     @review_bar.add Ti.UI.createImageView
       image: 'images/icons/heart.png'
       width: 18
@@ -81,6 +83,8 @@ class DishReviewView extends BaseView
       image: "images/icons/dark_camera@2x.png"
       opacity: 0.8
       height: 'auto'
+    overlay.addEventListener 'click', =>
+      (new Ti.View.DishReviewComposeView @model).render()
     @image.add overlay
     
 module.exports = DishReviewView

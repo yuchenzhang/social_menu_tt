@@ -19,6 +19,14 @@ class MenuWindowController
     @renderTopBar()
     @renderUserBar()
     @renderDishStrip()
+    Ti.API.addEventListener 'new:review', (review)=>
+      Ti.API.debug "new review: " + JSON.stringify review
+      if @new_review_view 
+        @new_review_view.reset(review)
+      else
+        Ti.API.debug "picture: " + review.attributes.picture_binary
+        @new_review_view = new Ti.View.DishReviewComposeView(review)
+        @window.add @new_review_view.render()
   
   renderTopBar: ->
     @top_bar ||= Ti.UI.createView

@@ -22,10 +22,21 @@
     }
 
     MenuWindowController.prototype.render = function() {
+      var _this = this;
       if (!this.menu.id) return;
       this.renderTopBar();
       this.renderUserBar();
-      return this.renderDishStrip();
+      this.renderDishStrip();
+      return Ti.API.addEventListener('new:review', function(review) {
+        Ti.API.debug("new review: " + JSON.stringify(review));
+        if (_this.new_review_view) {
+          return _this.new_review_view.reset(review);
+        } else {
+          Ti.API.debug("picture: " + review.attributes.picture_binary);
+          _this.new_review_view = new Ti.View.DishReviewComposeView(review);
+          return _this.window.add(_this.new_review_view.render());
+        }
+      });
     };
 
     MenuWindowController.prototype.renderTopBar = function() {

@@ -11,12 +11,14 @@
     __extends(DishReviewView, _super);
 
     function DishReviewView() {
+      this.refillContent = __bind(this.refillContent, this);
       this.tappableOverlay = __bind(this.tappableOverlay, this);
       DishReviewView.__super__.constructor.apply(this, arguments);
     }
 
     DishReviewView.prototype.events = {
-      'change:rewritable': 'tappableOverlay'
+      'change:rewritable': 'tappableOverlay',
+      'change': 'refillContent'
     };
 
     DishReviewView.prototype.review_bar = null;
@@ -77,7 +79,7 @@
         image: 'images/icons/comment.png',
         width: 18,
         height: 18,
-        top: 185,
+        top: 225,
         left: 20
       }));
       this.comment = Ti.UI.createLabel({
@@ -88,7 +90,7 @@
           fontStyle: 'italic'
         },
         textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-        top: 185,
+        top: 225,
         left: 43,
         width: 240,
         height: 54
@@ -98,7 +100,7 @@
         image: 'images/icons/heart.png',
         width: 18,
         height: 18,
-        top: 239,
+        top: 279,
         left: 20
       }));
       this.review_bar.add(Ti.UI.createLabel({
@@ -109,7 +111,7 @@
           fontStyle: 'italic'
         },
         textAlign: Ti.UI.TEXT_ALIGNMENT_LEFT,
-        top: 239,
+        top: 279,
         left: 43,
         width: 50,
         height: 'auto',
@@ -127,9 +129,51 @@
         height: 'auto'
       });
       overlay.addEventListener('click', function() {
-        return (new Ti.View.DishReviewComposeView(_this.model)).render();
+        return Ti.Media.openPhotoGallery({
+          success: function(event) {
+            var review;
+            try {
+              review = new Ti.Model.Review({
+                dish_id: _this.model.attributes.dish_id,
+                picture_binary: event.media
+              });
+              return Ti.API.fireEvent('new:review', review);
+            } catch (e) {
+              return alert(e);
+            }
+          },
+          cancel: function() {},
+          error: function(error) {
+            var a, f, review;
+            a = Titanium.UI.createAlertDialog({
+              title: 'Camera'
+            });
+            if (error.code === Ti.Media.NO_CAMERA) {
+              a.setMessage('Please run this test on device');
+              f = Ti.Filesystem.getFile('images/olive.jpg');
+              review = new Ti.Model.Review({
+                dish_id: _this.model.attributes.dish_id,
+                picture_binary: f.read()
+              });
+              Ti.API.fireEvent('new:review', review);
+            } else {
+              a.setMessage('Unexpected error: ' + error.code);
+            }
+            return a.show();
+          },
+          showControls: true,
+          mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
+          autohide: true,
+          allowEditing: true
+        });
       });
       return this.image.add(overlay);
+    };
+
+    DishReviewView.prototype.refillContent = function() {
+      Ti.API.debug("refill content for review " + this.model.attributes.id);
+      this.image.image = Ti.ImageProcess.cropImage(decodeURIComponent(this.model.picture_url()));
+      return this.comment.text = this.model.attributes.comment;
     };
 
     return DishReviewView;

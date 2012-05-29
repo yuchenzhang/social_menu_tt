@@ -10,36 +10,46 @@ class Review extends Backbone.Model
     dish_description:null
     comment: null
     rewritable:false
+    picture:null
+    picture_binary:null
   
   validation:
     id:
-      required: false
       pattern: /\d+/
     user_id:
-      required: true
       pattern: /\d+/
     dish_id:
       required: true
       pattern: /\d+/
     comment:
-      required: false
       maxLength: 140
-    
+   
+   initialize: ->
+     super
+     @bind 'validated:invalid', (model,attrs,error)->
+       Ti.API.error error
+   
+   parse: (data)->
+     Ti.API.debug "review fetched: " + JSON.stringify data
+     return {
+       id: data.id
+       picture: data.picture
+       user_id:data.user.id
+       user_name: data.user.name
+       user_avatar: data.user.avatar
+       comment: data.comment
+     }
+          
    picture_url: ->
      if @attributes.picture
-      Ti.App.endpoint + @attributes.picture 
+      Ti.App.endpoint + @attributes.picture
      else
       null
-      
+     
    url: ->
      if @attributes.id
       Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews/' + @attributes.id
      else
       Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews'
-   
-   save: ->
-     unless @attributes.id or @attributes.picture_binary
-      throw "picture_binary is not set!!!" 
-     else
-      super                     
+                        
 module.exports = Review      

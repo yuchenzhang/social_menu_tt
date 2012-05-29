@@ -17,20 +17,20 @@
       it('should have default dish_id', function() {
         return expect(review.get('dish_id')).toBeDefined();
       });
-      it('should have default comment', function() {
+      return it('should have default comment', function() {
         return expect(review.get('comment')).toBeDefined();
-      });
-      return it('should not have default picture binary', function() {
-        return expect(review.get('picture_binary')).toBeUndefined();
       });
     });
     describe('validations', function() {
       beforeEach(function() {
-        return review = new Ti.Model.Review({
+        review = new Ti.Model.Review({
           id: 1,
           user_id: 1,
           dish_id: 1,
           comment: 'blabla'
+        });
+        return review.bind('error', function(model, error) {
+          return Ti.API.error("error:" + error);
         });
       });
       it('should be valid', function() {
@@ -57,10 +57,9 @@
           })).toBeTruthy();
         });
       });
-      describe('picture_binary', function() {});
       return describe('picture_url', function() {});
     });
-    describe('rest url', function() {
+    return describe('rest url', function() {
       it('should have the url to save a new record', function() {
         review = new Ti.Model.Review({
           id: null,
@@ -69,7 +68,7 @@
         });
         return expect(review.url()).toEqual(Ti.App.endpoint + '/dishes/2/reviews');
       });
-      return it('should have the url to update an existing record', function() {
+      it('should have the url to update an existing record', function() {
         review = new Ti.Model.Review({
           id: 1,
           dish_id: 2,
@@ -77,47 +76,50 @@
         });
         return expect(review.url()).toEqual(Ti.App.endpoint + '/dishes/2/reviews/1');
       });
-    });
-    return describe('save', function() {
-      beforeEach(function() {
-        return clearAjaxRequests();
-      });
-      it('should not send save request if a new record is without a picture binary', function() {
-        review = new Ti.Model.Review({
-          id: null,
-          user_id: 1,
-          dish_id: 1,
-          comment: 'blabla'
+      return describe('save', function() {
+        beforeEach(function() {
+          review = new Ti.Model.Review({
+            user_id: 1,
+            dish_id: 1,
+            comment: 'blabla'
+          });
+          return review.bind('error', function(model, error) {
+            return Ti.API.error("error:" + error);
+          });
         });
-        try {
-          review.save();
-        } catch (_error) {}
-        return expect(mostRecentAjaxRequest()).toBeNull();
-      });
-      it('should send save request for an existing record no matter the picture binary is set or not', function() {
-        review = new Ti.Model.Review({
-          id: 1,
-          user_id: 1,
-          dish_id: 1,
-          comment: 'blabla'
+        it('should set picture binary', function() {
+          var blob, f;
+          f = Ti.Filesystem.getFile('images/olive.jpg');
+          blob = Ti.Utils.base64encode(f.read()).text;
+          review.set({
+            picture_binary: blob
+          });
+          return expect(review.get('picture_binary')).toEqual(blob);
         });
-        try {
-          review.save();
-        } catch (_error) {}
-        return expect(mostRecentAjaxRequest()).not.toBeNull();
-      });
-      return it('should send save request for a new record when its picture binary is set', function() {
-        review = new Ti.Model.Review({
-          id: null,
-          user_id: 1,
-          dish_id: 1,
-          comment: 'blabla',
-          picture_binary: 'xxxxxx'
+        return it('should save a new review and update the returned user_id and id', function() {
+          var request;
+          review.save(null, {
+            success: function(model, resp) {
+              return model.set({
+                saved_at: '2011-3-3 11:21:22'
+              });
+            }
+          });
+          request = mostRecentAjaxRequest();
+          request.response({
+            status: 201,
+            responseText: JSON.stringify({
+              id: 9,
+              user_id: 10,
+              dish_id: 1,
+              comment: 'blabla'
+            })
+          });
+          expect(review.attributes.id).toEqual(9);
+          expect(review.attributes.user_id).toEqual(10);
+          expect(review.attributes.dish_id).toEqual(1);
+          return expect(review.attributes.saved_at).toEqual('2011-3-3 11:21:22');
         });
-        try {
-          review.save();
-        } catch (_error) {}
-        return expect(mostRecentAjaxRequest()).not.toBeNull();
       });
     });
   });

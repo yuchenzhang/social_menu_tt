@@ -21,16 +21,16 @@
       dish_price: null,
       dish_description: null,
       comment: null,
-      rewritable: false
+      rewritable: false,
+      picture: null,
+      picture_binary: null
     };
 
     Review.prototype.validation = {
       id: {
-        required: false,
         pattern: /\d+/
       },
       user_id: {
-        required: true,
         pattern: /\d+/
       },
       dish_id: {
@@ -38,9 +38,27 @@
         pattern: /\d+/
       },
       comment: {
-        required: false,
         maxLength: 140
       }
+    };
+
+    Review.prototype.initialize = function() {
+      Review.__super__.initialize.apply(this, arguments);
+      return this.bind('validated:invalid', function(model, attrs, error) {
+        return Ti.API.error(error);
+      });
+    };
+
+    Review.prototype.parse = function(data) {
+      Ti.API.debug("review fetched: " + JSON.stringify(data));
+      return {
+        id: data.id,
+        picture: data.picture,
+        user_id: data.user.id,
+        user_name: data.user.name,
+        user_avatar: data.user.avatar,
+        comment: data.comment
+      };
     };
 
     Review.prototype.picture_url = function() {
@@ -56,14 +74,6 @@
         return Ti.App.endpoint + '/dishes/' + this.attributes.dish_id + '/reviews/' + this.attributes.id;
       } else {
         return Ti.App.endpoint + '/dishes/' + this.attributes.dish_id + '/reviews';
-      }
-    };
-
-    Review.prototype.save = function() {
-      if (!(this.attributes.id || this.attributes.picture_binary)) {
-        throw "picture_binary is not set!!!";
-      } else {
-        return Review.__super__.save.apply(this, arguments);
       }
     };
 

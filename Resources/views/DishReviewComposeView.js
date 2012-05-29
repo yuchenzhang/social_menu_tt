@@ -13,98 +13,113 @@
       DishReviewComposeView.__super__.constructor.apply(this, arguments);
     }
 
+    DishReviewComposeView.prototype.view = null;
+
+    DishReviewComposeView.prototype.image = null;
+
+    DishReviewComposeView.prototype.textarea = null;
+
     DishReviewComposeView.prototype.render = function() {
-      var button, indView, message, messageView, overlay, scanner;
-      scanner = Titanium.UI.createView({
-        width: 260,
-        height: 200,
-        borderColor: 'red',
-        borderWidth: 5,
-        borderRadius: 15
+      var back_btn, camera, cancel, flexSpace, send, send_btn,
+        _this = this;
+      this.view = Ti.UI.createView({
+        width: 300,
+        height: 400,
+        backgroundColor: '#777',
+        opacity: 0.8,
+        top: 5
       });
-      button = Titanium.UI.createButton({
-        color: '#fff',
-        backgroundImage: 'images/BUTT_grn_on.png',
-        backgroundSelectedImage: 'images/BUTT_grn_off.png',
-        backgroundDisabledImage: 'images/BUTT_gry_on.png',
-        bottom: 10,
-        width: 301,
-        height: 57,
+      this.image = Ti.UI.createImageView({
+        image: Ti.ImageProcess.cropImage(this.model.attributes.picture_binary),
+        width: 280,
+        height: 'auto',
+        top: 10
+      });
+      send = Ti.UI.createButton({
+        title: 'Send',
+        style: Ti.UI.iPhone.SystemButtonStyle.DONE
+      });
+      camera = Ti.UI.createButton({
+        systemButton: Ti.UI.iPhone.SystemButton.CAMERA
+      });
+      cancel = Ti.UI.createButton({
+        systemButton: Ti.UI.iPhone.SystemButton.CANCEL
+      });
+      flexSpace = Ti.UI.createButton({
+        systemButton: Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
+      });
+      this.textarea = Ti.UI.createTextArea({
+        color: '#000',
+        value: 'Focus to see keyboard with toolbar',
+        height: 120,
+        width: 280,
+        bottom: 50,
+        borderColor: '#000',
+        keyboardToolbar: [cancel, flexSpace, camera, flexSpace, send],
+        keyboardToolbarColor: '#999',
+        keyboardToolbarHeight: 40
+      });
+      send_btn = Ti.UI.createButton({
+        color: "#fff",
+        backgroundImage: 'images/BUTT_grn_off.png',
+        backgroundSelectedImage: 'images/BUTT_grn_on.png',
+        backgroundDisabledImage: 'images/BUTT_grn_off.png',
+        width: 50,
+        height: 30,
         font: {
-          fontSize: 20,
+          fontSize: 14,
           fontWeight: 'bold',
           fontFamily: 'Helvetica Neue'
         },
-        title: 'Take Picture'
+        title: 'Send',
+        right: 5,
+        bottom: 10
       });
-      messageView = Titanium.UI.createView({
-        height: 30,
-        width: 250,
-        visible: false
-      });
-      indView = Titanium.UI.createView({
-        height: 30,
-        width: 250,
-        backgroundColor: '#000',
-        borderRadius: 10,
-        opacity: 0.7
-      });
-      messageView.add(indView);
-      message = Titanium.UI.createLabel({
-        text: 'Picture Taken',
-        color: '#fff',
-        font: {
-          fontSize: 20,
-          fontWeight: 'bold',
-          fontFamily: 'Helvetica Neue'
-        },
-        width: 'auto',
-        height: 'auto'
-      });
-      messageView.add(message);
-      overlay = Titanium.UI.createView();
-      overlay.add(scanner);
-      overlay.add(button);
-      overlay.add(messageView);
-      button.addEventListener('click', function() {
-        scanner.borderColor = 'blue';
-        Ti.Media.takePicture();
-        messageView.animate({
-          visible: true
+      this.view.add(send_btn);
+      send_btn.addEventListener('click', function() {
+        _this.model.save({
+          picture_binary: (Ti.Utils.base64encode(_this.image.toImage())).text,
+          comment: _this.textarea.value
         });
-        return setTimeout((function() {
-          scanner.borderColor = 'red';
-          return messageView.animate({
-            visible: false
-          });
-        }), 500);
+        send_btn.title = 'Sent';
+        return send_btn.enabled = false;
       });
-      return Ti.Media.showCamera({
-        success: function(event) {
-          Ti.API.debug("picture was taken");
-          this.model.set({
-            picture_binary: event.media
-          });
-          return Ti.Media.hideCamera();
+      back_btn = Ti.UI.createButton({
+        color: "#fff",
+        backgroundImage: 'images/BUTT_gry_off.png',
+        backgroundSelectedImage: 'images/BUTT_gry_on.png',
+        backgroundDisabledImage: 'images/BUTT_gry_off.png',
+        width: 50,
+        height: 30,
+        font: {
+          fontSize: 14,
+          fontWeight: 'bold',
+          fontFamily: 'Helvetica Neue'
         },
-        cancel: function() {},
-        error: function(error) {
-          var a;
-          a = Titanium.UI.createAlertDialog({
-            title: 'Camera'
-          });
-          if (error.code === Ti.Media.NO_CAMERA) {
-            a.setMessage('Please run this test on device');
-          } else {
-            a.setMessage('Unexpected error: ' + error.code);
-          }
-          return a.show();
-        },
-        overlay: overlay,
-        showControls: false,
-        mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
-        autohide: false
+        title: 'Back',
+        left: 5,
+        bottom: 10
       });
+      this.view.add(back_btn);
+      back_btn.addEventListener('click', function() {
+        return _this.view.hide();
+      });
+      this.view.add(this.image);
+      this.view.add(this.textarea);
+      return this.view;
+    };
+
+    DishReviewComposeView.prototype.reset = function(review) {
+      this.model.set({
+        id: null,
+        comment: null,
+        picture_binary: review.attributes.picture_binary,
+        dish_id: review.attributes.dish_id,
+        user_id: null
+      });
+      this.image.image = Ti.ImageProcess.cropImage(this.model.attributes.picture_binary);
+      this.textarea.value = 'Focus to see keyboard with toolbar';
+      return this.view.show();
     };
 
     return DishReviewComposeView;

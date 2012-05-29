@@ -10,7 +10,7 @@
 
   Ti.include('../lib/mock-ajax.js');
 
-  Ti.include('models/ReviewSpec.js');
+  Ti.include('views/DishReviewComposeViewSpec.js');
 
   jasmine.getEnv().addReporter(new jasmine.TitaniumReporter());
 

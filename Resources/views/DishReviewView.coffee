@@ -2,7 +2,7 @@ BaseView = require 'views/BaseView'
 class DishReviewView extends BaseView
   events:
     'change:rewritable':'tappableOverlay'
-    'change': 'refillContent'
+    'refetched': 'refillContent'
     
   review_bar:null
   image:null
@@ -32,7 +32,7 @@ class DishReviewView extends BaseView
       width: 'auto'
       height: 25  
     @image = Ti.UI.createImageView
-       image: Ti.ImageProcess.cropImage (decodeURIComponent @model.picture_url())
+       image: decodeURIComponent @model.picture_url()
        width:  290
        height: 'auto' 
        top: 38
@@ -77,6 +77,10 @@ class DishReviewView extends BaseView
       height: 'auto'
       bottom: 5
     
+    Ti.API.addEventListener 'created:review:dish_'+@model.attributes.dish_id, =>
+      Ti.API.debug 'received created:review:dish_' + @model.attributes.dish_id
+      @model.refetch()
+    
     return @review_bar
     
   tappableOverlay: =>
@@ -85,37 +89,56 @@ class DishReviewView extends BaseView
       opacity: 0.8
       height: 'auto'
     overlay.addEventListener 'click', =>
-      Ti.Media.openPhotoGallery 
+      Ti.Media.openPhotoGallery
         success: (event)=>
-          try
+          try 
             review = new Ti.Model.Review
               dish_id: @model.attributes.dish_id
-              picture_binary: event.media
+              picture: Ti.ImageProcess.saveLocal event.media
             Ti.API.fireEvent 'new:review', review        
           catch e
-            alert e   
-        cancel: ->
-        error: (error)=>
-          a = Titanium.UI.createAlertDialog {title:'Camera'}
-          if error.code == Ti.Media.NO_CAMERA
-            a.setMessage 'Please run this test on device'
-            f = Ti.Filesystem.getFile 'images/olive.jpg'
-            review = new Ti.Model.Review
-              dish_id: @model.attributes.dish_id
-              picture_binary: f.read()
-            Ti.API.fireEvent 'new:review', review        
-          else
-            a.setMessage 'Unexpected error: ' + error.code
-          a.show()
-        showControls:true #don't show system controls
-        mediaTypes:Ti.Media.MEDIA_TYPE_PHOTO
-        autohide:true  #tell the system not to auto-hide and we'll do it ourself
-        allowEditing: true    
+            alert e
+         cancel: ->
+         error: (error)->
+            Ti.API.error error
+      # Ti.Media.showCamera 
+        # success: (event)=>
+          # try
+            # review = new Ti.Model.Review
+              # dish_id: @model.attributes.dish_id
+              # picture: Ti.ImageProcess.saveLocal event.media
+            # Ti.API.fireEvent 'new:review', review        
+          # catch e
+            # alert e   
+        # cancel: ->
+        # error: (error)=>
+          # a = Titanium.UI.createAlertDialog {title:'Camera'}
+          # if error.code == Ti.Media.NO_CAMERA
+            # Ti.Media.openPhotoGallery
+              # success: (event)=>
+                # try 
+                  # review = new Ti.Model.Review
+                    # dish_id: @model.attributes.dish_id
+                    # picture: Ti.ImageProcess.saveLocal event.media
+                  # Ti.API.fireEvent 'new:review', review        
+                # catch e
+                  # alert e
+               # cancel: ->
+               # error: (error)->
+                  # Ti.API.error error        
+          # else
+            # a.setMessage 'Unexpected error: ' + error.code
+            # a.show()
+        # showControls:true #don't show system controls
+        # mediaTypes:Ti.Media.MEDIA_TYPE_PHOTO
+        # autohide:true  #tell the system not to auto-hide and we'll do it ourself
+        # allowEditing: true    
     @image.add overlay
     
   refillContent: =>
     Ti.API.debug "refill content for review " + @model.attributes.id
-    @image.image = Ti.ImageProcess.cropImage decodeURIComponent @model.picture_url()
+    @image.image = decodeURIComponent @model.picture_url()
+    Ti.API.debug @image.image
     @comment.text = @model.attributes.comment
       
 module.exports = DishReviewView

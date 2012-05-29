@@ -27,7 +27,7 @@ class Review extends Backbone.Model
    initialize: ->
      super
      @bind 'validated:invalid', (model,attrs,error)->
-       Ti.API.error error
+       Ti.API.error error + ' ' + JSON.stringify model
    
    parse: (data)->
      Ti.API.debug "review fetched: " + JSON.stringify data
@@ -42,7 +42,10 @@ class Review extends Backbone.Model
           
    picture_url: ->
      if @attributes.picture
-      Ti.App.endpoint + @attributes.picture
+      if @attributes.picture.match /file:\/\//
+        return @attributes.picture
+      else
+        return Ti.App.endpoint + @attributes.picture
      else
       null
      
@@ -51,5 +54,13 @@ class Review extends Backbone.Model
       Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews/' + @attributes.id
      else
       Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews'
-                        
+   
+   refetch: ->
+     @set {id: -1}
+     @fetch({
+       success: =>
+         Ti.API.debug "refetched review " + @attributes.id
+         @trigger 'refetched'
+     })
+                          
 module.exports = Review      

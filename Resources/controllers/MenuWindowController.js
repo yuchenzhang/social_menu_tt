@@ -32,7 +32,7 @@
         if (_this.new_review_view) {
           return _this.new_review_view.reset(review);
         } else {
-          Ti.API.debug("picture: " + review.attributes.picture_binary);
+          Ti.API.debug("picture: " + review.attributes.picture);
           _this.new_review_view = new Ti.View.DishReviewComposeView(review);
           return _this.window.add(_this.new_review_view.render());
         }

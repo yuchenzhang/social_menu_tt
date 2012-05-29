@@ -19,47 +19,34 @@
 
     DishReviewComposeView.prototype.textarea = null;
 
+    DishReviewComposeView.prototype.send_btn = null;
+
     DishReviewComposeView.prototype.render = function() {
-      var back_btn, camera, cancel, flexSpace, send, send_btn,
+      var back_btn,
         _this = this;
       this.view = Ti.UI.createView({
         width: 300,
         height: 400,
         backgroundColor: '#777',
-        opacity: 0.8,
         top: 5
-      });
-      this.image = Ti.UI.createImageView({
-        image: Ti.ImageProcess.cropImage(this.model.attributes.picture_binary),
-        width: 280,
-        height: 'auto',
-        top: 10
-      });
-      send = Ti.UI.createButton({
-        title: 'Send',
-        style: Ti.UI.iPhone.SystemButtonStyle.DONE
-      });
-      camera = Ti.UI.createButton({
-        systemButton: Ti.UI.iPhone.SystemButton.CAMERA
-      });
-      cancel = Ti.UI.createButton({
-        systemButton: Ti.UI.iPhone.SystemButton.CANCEL
-      });
-      flexSpace = Ti.UI.createButton({
-        systemButton: Ti.UI.iPhone.SystemButton.FLEXIBLE_SPACE
       });
       this.textarea = Ti.UI.createTextArea({
         color: '#000',
         value: 'Focus to see keyboard with toolbar',
         height: 120,
         width: 280,
-        bottom: 50,
+        top: 5,
         borderColor: '#000',
-        keyboardToolbar: [cancel, flexSpace, camera, flexSpace, send],
         keyboardToolbarColor: '#999',
         keyboardToolbarHeight: 40
       });
-      send_btn = Ti.UI.createButton({
+      this.image = Ti.UI.createImageView({
+        image: Ti.ImageProcess.cropImage(this.model.picture_url()),
+        width: 280,
+        height: 'auto',
+        bottom: 50
+      });
+      this.send_btn = Ti.UI.createButton({
         color: "#fff",
         backgroundImage: 'images/BUTT_grn_off.png',
         backgroundSelectedImage: 'images/BUTT_grn_on.png',
@@ -75,14 +62,18 @@
         right: 5,
         bottom: 10
       });
-      this.view.add(send_btn);
-      send_btn.addEventListener('click', function() {
+      this.view.add(this.send_btn);
+      this.send_btn.addEventListener('click', function() {
         _this.model.save({
           picture_binary: (Ti.Utils.base64encode(_this.image.toImage())).text,
           comment: _this.textarea.value
+        }, {
+          success: function() {
+            return Ti.API.fireEvent('created:review:dish_' + _this.model.attributes.dish_id);
+          }
         });
-        send_btn.title = 'Sent';
-        return send_btn.enabled = false;
+        _this.send_btn.title = 'Sent';
+        return _this.send_btn.enabled = false;
       });
       back_btn = Ti.UI.createButton({
         color: "#fff",
@@ -104,8 +95,8 @@
       back_btn.addEventListener('click', function() {
         return _this.view.hide();
       });
-      this.view.add(this.image);
       this.view.add(this.textarea);
+      this.view.add(this.image);
       return this.view;
     };
 
@@ -113,12 +104,14 @@
       this.model.set({
         id: null,
         comment: null,
-        picture_binary: review.attributes.picture_binary,
+        picture: review.attributes.picture,
         dish_id: review.attributes.dish_id,
         user_id: null
       });
-      this.image.image = Ti.ImageProcess.cropImage(this.model.attributes.picture_binary);
+      this.image.image = Ti.ImageProcess.cropImage(this.model.picture_url());
       this.textarea.value = 'Focus to see keyboard with toolbar';
+      this.send_btn.title = 'Send';
+      this.send_btn.enabled = true;
       return this.view.show();
     };
 

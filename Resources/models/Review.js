@@ -45,7 +45,7 @@
     Review.prototype.initialize = function() {
       Review.__super__.initialize.apply(this, arguments);
       return this.bind('validated:invalid', function(model, attrs, error) {
-        return Ti.API.error(error);
+        return Ti.API.error(error + ' ' + JSON.stringify(model));
       });
     };
 
@@ -63,7 +63,11 @@
 
     Review.prototype.picture_url = function() {
       if (this.attributes.picture) {
-        return Ti.App.endpoint + this.attributes.picture;
+        if (this.attributes.picture.match(/file:\/\//)) {
+          return this.attributes.picture;
+        } else {
+          return Ti.App.endpoint + this.attributes.picture;
+        }
       } else {
         return null;
       }
@@ -75,6 +79,19 @@
       } else {
         return Ti.App.endpoint + '/dishes/' + this.attributes.dish_id + '/reviews';
       }
+    };
+
+    Review.prototype.refetch = function() {
+      var _this = this;
+      this.set({
+        id: -1
+      });
+      return this.fetch({
+        success: function() {
+          Ti.API.debug("refetched review " + _this.attributes.id);
+          return _this.trigger('refetched');
+        }
+      });
     };
 
     return Review;

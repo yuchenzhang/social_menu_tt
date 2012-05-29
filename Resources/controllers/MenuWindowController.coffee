@@ -24,7 +24,7 @@ class MenuWindowController
       if @new_review_view 
         @new_review_view.reset(review)
       else
-        Ti.API.debug "picture: " + review.attributes.picture_binary
+        Ti.API.debug "picture: " + review.attributes.picture
         @new_review_view = new Ti.View.DishReviewComposeView(review)
         @window.add @new_review_view.render()
   

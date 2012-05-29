@@ -18,7 +18,7 @@
 
     DishReviewView.prototype.events = {
       'change:rewritable': 'tappableOverlay',
-      'change': 'refillContent'
+      'refetched': 'refillContent'
     };
 
     DishReviewView.prototype.review_bar = null;
@@ -28,6 +28,7 @@
     DishReviewView.prototype.comment = null;
 
     DishReviewView.prototype.render = function() {
+      var _this = this;
       this.review_bar = Ti.UI.createView({
         width: '100%',
         height: 'auto',
@@ -61,7 +62,7 @@
         height: 25
       }));
       this.image = Ti.UI.createImageView({
-        image: Ti.ImageProcess.cropImage(decodeURIComponent(this.model.picture_url())),
+        image: decodeURIComponent(this.model.picture_url()),
         width: 290,
         height: 'auto',
         top: 38,
@@ -117,6 +118,10 @@
         height: 'auto',
         bottom: 5
       }));
+      Ti.API.addEventListener('created:review:dish_' + this.model.attributes.dish_id, function() {
+        Ti.API.debug('received created:review:dish_' + _this.model.attributes.dish_id);
+        return _this.model.refetch();
+      });
       return this.review_bar;
     };
 
@@ -135,7 +140,7 @@
             try {
               review = new Ti.Model.Review({
                 dish_id: _this.model.attributes.dish_id,
-                picture_binary: event.media
+                picture: Ti.ImageProcess.saveLocal(event.media)
               });
               return Ti.API.fireEvent('new:review', review);
             } catch (e) {
@@ -144,27 +149,8 @@
           },
           cancel: function() {},
           error: function(error) {
-            var a, f, review;
-            a = Titanium.UI.createAlertDialog({
-              title: 'Camera'
-            });
-            if (error.code === Ti.Media.NO_CAMERA) {
-              a.setMessage('Please run this test on device');
-              f = Ti.Filesystem.getFile('images/olive.jpg');
-              review = new Ti.Model.Review({
-                dish_id: _this.model.attributes.dish_id,
-                picture_binary: f.read()
-              });
-              Ti.API.fireEvent('new:review', review);
-            } else {
-              a.setMessage('Unexpected error: ' + error.code);
-            }
-            return a.show();
-          },
-          showControls: true,
-          mediaTypes: Ti.Media.MEDIA_TYPE_PHOTO,
-          autohide: true,
-          allowEditing: true
+            return Ti.API.error(error);
+          }
         });
       });
       return this.image.add(overlay);
@@ -172,7 +158,8 @@
 
     DishReviewView.prototype.refillContent = function() {
       Ti.API.debug("refill content for review " + this.model.attributes.id);
-      this.image.image = Ti.ImageProcess.cropImage(decodeURIComponent(this.model.picture_url()));
+      this.image.image = decodeURIComponent(this.model.picture_url());
+      Ti.API.debug(this.image.image);
       return this.comment.text = this.model.attributes.comment;
     };
 

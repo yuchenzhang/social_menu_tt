@@ -9,3 +9,8 @@ exports.cropImage = (url)->
     cropView.add baseImage
     croppedImage = cropView.toImage()
     return croppedImage
+
+exports.saveLocal = (blob)->
+    f = Ti.Filesystem.getFile Ti.Filesystem.applicationDataDirectory, "camera.jpg"
+    f.write blob
+    return f.nativePath

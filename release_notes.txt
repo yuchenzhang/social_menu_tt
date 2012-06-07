@@ -1,0 +1,171 @@
+Baseline notes
+===========
+          
+social_menu_tt
+
+Version: 1.0
+
+1. Important information
+2. Known problems
+3. Feature
+4. PR Fixes
+5. Commits
+
+1. Important information
+-------------------------------------------
+This app runs on Titanium SDK 1.8.2. It is not compatible yet with higher version SDKs.
+
+2. Known problems
+-------------------------------------------
+
+3. Features
+-------------------------------------------
+a. User sign in
+b. User scanning QR code for menu
+c. User exploring menu and ordering dishes
+d. User sending orders 
+e. User reviewing dishes
+f. User seeing the reviews timeline
+
+4. PR Fixes
+--------------------------------------------
+
+5. Commits
+--------------------------------------------
+commit e656a774359e4d0e2dceab476cd9259332fe7e83
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Thu Jun 7 15:06:08 2012 +0200
+
+    added timeline, refactored model and view code, all spec tests pass
+
+commit fafa7ab83a49b35f704d30dc1a01c447564c2e4e
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Wed May 30 00:59:43 2012 +0200
+
+    picture and comment works
+
+commit 26656c7d3d685e7a3b0b18b940fe93f9287b8c80
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Tue May 29 09:56:10 2012 +0200
+
+    added review composer view, use symlink to backbone.validation instead
+
+commit 676f73cab9db8f58eb6d4b52e7cc0b0e8af87c71
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Fri May 25 00:22:07 2012 +0200
+
+    created view classes
+
+commit b2eaa84871bce3800c28d891bdccadab0b4a362a
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Mon May 21 16:37:14 2012 +0200
+
+    refactored the menu view
+
+commit 8815e754095e3d5f49a019bfab7b9f501fb46c30
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Mon May 21 14:09:43 2012 +0200
+
+    refactoring started to make the view models, login page done with UserFormView, and error handling on the view
+
+commit 513657338f78188e6aa6b9354de0a91fc0aefcd5
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Sun May 20 10:56:27 2012 +0200
+
+    added Review mdoel, and MenuGuide and Order overlay, WIP to integrate with camera
+
+commit 61c7a5e253fa8d9dd8aba2dc9f46785bd3f1adc7
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Sat May 5 23:59:17 2012 +0200
+
+    added order window and integrated sending to server"
+
+commit 0c517101a07ed80f6b28216f93a5e9b306e3ea80
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Fri May 4 11:16:00 2012 +0200
+
+    added DB util for user token, added ordering in menu window
+
+commit 54a1bd197ac32825a3b83c6e2f7e9a27690ce892
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Tue May 1 03:00:21 2012 +0200
+
+    added model order and spec
+
+commit 5623224605e9555a4d09bad14f579b21cda84a34
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Tue May 1 01:23:59 2012 +0200
+
+    added spec test for models
+
+commit 85282d59a9e9318f792c89966d93fb1098074e63
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Mon Apr 30 01:09:25 2012 +0200
+
+    added user model, started spec test
+
+commit 9d64a24948de04e99224bdc48c02e49dbc86fee4
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Wed Apr 25 00:38:36 2012 +0200
+
+    built mock up menu page
+
+commit d6737fe744ca8aa179564b9c62090115d23b5957
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Wed Apr 18 12:59:18 2012 +0200
+
+    homepage finished, able to scan menu QR and go to the right menu
+
+commit 75e21ee46c7db781c951f40f06cd1f0838526c5f
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Mon Apr 16 17:58:29 2012 +0200
+
+    also added app.js
+
+commit 87ce99ba0a8be914533e1597761e67f33ef9a91f
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Mon Apr 16 17:55:36 2012 +0200
+
+    added backbone and models
+
+commit e8437de1f142539e92bdc1e0828d69c6b4b135b7
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Wed Mar 28 11:32:14 2012 +0200
+
+    WIP
+
+commit e92bab9b42145a706aff7164c194260346861599
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Fri Mar 23 10:45:19 2012 +0100
+
+    WIP
+
+commit 3264f8cf6c960046edb8f8ea73f5b612b175dca2
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Wed Mar 21 15:42:18 2012 +0100
+
+    wip
+
+commit 0148a6d1e8ecb1fbfbfc3f4c059b65cd10ec602c
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Tue Mar 13 20:19:56 2012 +0100
+
+    WIP
+
+commit d39a5f750a702537d2f27152df2b9a62c8ba746a
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Sun Mar 11 09:34:58 2012 +0100
+
+    added new views and assets
+
+commit 692c34ab654fa72c5222feefe1f3085c20432d86
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Tue Feb 21 00:05:59 2012 +0100
+
+    added all code
+
+commit 46d0751f318d1e2d6e04cec9a965ab38fe90ca5a
+Author: Yuchen Zhang <yuchenzhang@me.com>
+Date:   Tue Feb 21 00:02:21 2012 +0100
+
+    first commit

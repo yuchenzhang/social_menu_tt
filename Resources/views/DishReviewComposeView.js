@@ -41,7 +41,7 @@
         keyboardToolbarHeight: 40
       });
       this.image = Ti.UI.createImageView({
-        image: Ti.ImageProcess.cropImage(this.model.picture_url()),
+        image: Ti.ImageProcess.cropImage(Ti.ImageProcess.urlComplete(this.model.attributes.picture)),
         width: 280,
         height: 'auto',
         bottom: 50
@@ -101,15 +101,9 @@
     };
 
     DishReviewComposeView.prototype.reset = function(review) {
-      this.model.set({
-        id: null,
-        comment: null,
-        picture: review.attributes.picture,
-        dish_id: review.attributes.dish_id,
-        user_id: null
-      });
-      this.image.image = Ti.ImageProcess.cropImage(this.model.picture_url());
-      this.textarea.value = 'Focus to see keyboard with toolbar';
+      this.model = review;
+      this.image.image = Ti.ImageProcess.cropImage(Ti.ImageProcess.urlComplete(this.model.attributes.picture));
+      this.textarea.value = this.model.attributes.comment;
       this.send_btn.title = 'Send';
       this.send_btn.enabled = true;
       return this.view.show();

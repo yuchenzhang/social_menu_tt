@@ -23,4 +23,9 @@
     return f.nativePath;
   };
 
+  exports.urlComplete = function(url) {
+    if (url === null || url.match(/^https?|ftp|file:\/\//)) return url;
+    return Ti.App.endpoint + url;
+  };
+
 }).call(this);

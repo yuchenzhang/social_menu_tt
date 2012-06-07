@@ -1,11 +1,13 @@
 init = ->  
   Ti.App = 
-    # endpoint: "http://localhost:8000"
-    endpoint: "http://192.168.1.12:8000"
+    endpoint: "http://localhost:8000"
+    # endpoint: "http://192.168.1.12:8000"
     # endpoint: "http://192.168.1.5:8000"
-    test_enabled: false
+    # endpoint: "http://www.socialmenu.fm"
+    test_enabled: true
   
   Ti.Model = 
+    BaseModel: require "models/Base"
     Dish: require "models/Dish"
     DishCollection: require "models/DishCollection"
     Menu: require "models/Menu"
@@ -14,6 +16,7 @@ init = ->
     Order: require "models/Order"
     Review: require "models/Review"
     ReviewCollection: require "models/ReviewCollection"
+    Timeline: require "models/Timeline"
     
   Ti.DB = 
     Util: require "helper/DB"
@@ -38,6 +41,7 @@ init = ->
     DishReviewView: require 'views/DishReviewView'
     OrderView: require 'views/OrderView'
     DishReviewComposeView: require 'views/DishReviewComposeView'
+    TimelineView: require 'views/TimelineView'
          
   if Ti.App.test_enabled
     Ti.include "specs/tests.js"

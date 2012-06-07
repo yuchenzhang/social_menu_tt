@@ -15,10 +15,10 @@
 
   HomeWindowController = (function() {
 
-    function HomeWindowController(menu, user) {
+    function HomeWindowController(user) {
       var cancel, logoView, overlay, scanCode, title, topView,
         _this = this;
-      this.menu = menu;
+      this.menu = new Ti.Model.Menu;
       this.user = user;
       this.window = Ti.UI.createWindow({
         title: 'Homepage',
@@ -78,7 +78,7 @@
       overlay.add(cancel);
       scanCode.addEventListener('click', function() {
         return _this.menu.set({
-          'id': '646e14e0-6d0f-012f-00d0-58b035fd32cb'
+          'id': 'demo'
         });
       });
       this.window.add(scanCode);
@@ -91,7 +91,7 @@
         });
         return Barcode.cancel();
       });
-      this.menu.on("data:refetched", function() {
+      this.menu.on("menu:refetched", function() {
         var menu_window;
         try {
           menu_window = (new Ti.Controller.MenuWindow(_this.menu, _this.user)).window;

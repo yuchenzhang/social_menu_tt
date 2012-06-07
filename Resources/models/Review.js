@@ -1,7 +1,9 @@
 (function() {
-  var Review,
+  var BaseModel, Review,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BaseModel = require('models/Base');
 
   Review = (function(_super) {
 
@@ -38,19 +40,13 @@
         pattern: /\d+/
       },
       comment: {
+        required: true,
         maxLength: 140
       }
     };
 
-    Review.prototype.initialize = function() {
-      Review.__super__.initialize.apply(this, arguments);
-      return this.bind('validated:invalid', function(model, attrs, error) {
-        return Ti.API.error(error + ' ' + JSON.stringify(model));
-      });
-    };
-
     Review.prototype.parse = function(data) {
-      Ti.API.debug("review fetched: " + JSON.stringify(data));
+      Ti.API.debug("review parse: " + JSON.stringify(data));
       return {
         id: data.id,
         picture: data.picture,
@@ -59,18 +55,6 @@
         user_avatar: data.user.avatar,
         comment: data.comment
       };
-    };
-
-    Review.prototype.picture_url = function() {
-      if (this.attributes.picture) {
-        if (this.attributes.picture.match(/file:\/\//)) {
-          return this.attributes.picture;
-        } else {
-          return Ti.App.endpoint + this.attributes.picture;
-        }
-      } else {
-        return null;
-      }
     };
 
     Review.prototype.url = function() {
@@ -89,14 +73,14 @@
       return this.fetch({
         success: function() {
           Ti.API.debug("refetched review " + _this.attributes.id);
-          return _this.trigger('refetched');
+          return _this.trigger('review:refetched');
         }
       });
     };
 
     return Review;
 
-  })(Backbone.Model);
+  })(BaseModel);
 
   module.exports = Review;
 

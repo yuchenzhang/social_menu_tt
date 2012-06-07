@@ -131,6 +131,10 @@
         bottom: 5
       }));
       review_bar = (new Ti.View.DishReviewView(this.model.reviews.at(0))).render();
+      Ti.API.addEventListener('created:review:dish_' + this.model.attributes.id, function() {
+        Ti.API.debug('received created:review:dish_' + _this.model.attributes.id);
+        return _this.model.reviews.at(0).refetch();
+      });
       this.row.add(info_bar);
       this.row.add(description_bar);
       this.row.add(review_bar);

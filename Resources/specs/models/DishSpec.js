@@ -6,21 +6,12 @@
     beforeEach(function() {
       return dish = new Ti.Model.Dish;
     });
-    describe('default attributes', function() {
-      it('should have a default id', function() {
-        return expect(dish.get('id')).toBeDefined();
+    describe('attributes', function() {
+      it('should have its count defined as zero by default', function() {
+        return expect(dish.attributes.count).toEqual(0);
       });
-      it('should have a default name', function() {
-        return expect(dish.get('name')).toBeDefined();
-      });
-      it('should have a default price', function() {
-        return expect(dish.get('price')).toBeDefined();
-      });
-      it('should not have its review collection defined by default', function() {
-        return expect(dish.reviews).toBeUndefined();
-      });
-      return it('should not have its count defined by default', function() {
-        return expect(dish.count).toBeUndefined();
+      return it('should by default is orderable', function() {
+        return expect(dish.attributes.orderable).toEqual(true);
       });
     });
     describe('validations', function() {
@@ -47,6 +38,11 @@
       it('should not accept a invalid price', function() {
         return expect(dish.set({
           price: 'abc'
+        })).toBeFalsy();
+      });
+      it('should not accept a invalid count', function() {
+        return expect(dish.set({
+          count: 'abc'
         })).toBeFalsy();
       });
       return it('should not accept a minus count', function() {
@@ -90,9 +86,9 @@
           description: 'blabla'
         };
         expect(dish.parse(data)).toEqual(attributes);
-        expect(dish.reviews.size()).toEqual(2);
+        expect(dish.reviews.length).toEqual(2);
         expect(dish.reviews.at(0) instanceof Ti.Model.Review).toBeTruthy();
-        return expect(dish.reviews.at(0).get('id')).toEqual(1);
+        return expect(dish.reviews.at(0).attributes.picture).toEqual('images/1.png');
       });
     });
   });

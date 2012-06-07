@@ -1,4 +1,5 @@
-class Order extends Backbone.Model
+BaseModel = require 'models/Base'
+class Order extends BaseModel
   urlRoot: Ti.App.endpoint + "/orders"
   
   defaults:
@@ -31,15 +32,19 @@ class Order extends Backbone.Model
     @orderable_dishes.each (dish)=> 
       dish.on 'change:count', @orderDish      
     @on "change:id", =>
-      @sync_id = setInterval (=>@fetch()),5000 if @attributes.id
+      @sync_id = setInterval (=>@fetch()),5000 if @attributes.id and not Ti.App.test_enabled
     @on "change:status", =>
       if @attributes.status == 'submitted'
         @orderable_dishes.each (dish)->
           dish.set {orderable: false}
+        setTimeout (=>@forceConfirm()),5000 unless Ti.App.test_enabled
       if @attributes.status == 'confirmed'
         clearInterval @sync_id if @sync_id
         @dishes.each (dish)->
           dish.reviews.at(0).set {rewritable: true}
+  
+  forceConfirm: =>
+    @set {status: 'confirmed'}
   
   orderDish: (dish)=>
     if dish.attributes.count > 0
@@ -57,7 +62,7 @@ class Order extends Backbone.Model
   
   toJSON: ->
     json = {
-      id: @get 'id'
+      id: @attributes.id
       restaurant_id: @attributes.restaurant_id
       user_id: @attributes.user_id
       authentication_token: Ti.DB.Util.activeToken()
@@ -72,8 +77,8 @@ class Order extends Backbone.Model
     Ti.API.debug "parsing order " + JSON.stringify data
     {
       id:data.id
-      restaurant_id: data.restaurant_id || data.restaurant.id
-      user_id: data.user_id || data.user.id
+      restaurant_id: data.restaurant.id
+      user_id: data.user.id
       status: data.status
     }
         

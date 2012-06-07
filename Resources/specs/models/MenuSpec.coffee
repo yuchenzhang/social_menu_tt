@@ -4,17 +4,13 @@ describe 'Menu model', ->
     menu = new Ti.Model.Menu
     jasmine.Ajax.useMock()
     
-  describe 'attributes', ->  
-    it 'should have an null id by default', ->
-      expect(menu.get 'id').toBeNull()
-    it 'should have a null table number by default', ->
-      expect(menu.get 'table_number').toBeNull()
+  describe 'initialize', ->  
     it 'should have a restaurant', ->
       expect(menu.restaurant instanceof Ti.Model.Restaurant).toBeTruthy()
     it 'should have a dish collection', ->
       expect(menu.dishes instanceof Ti.Model.DishCollection).toBeTruthy()
-    
-  describe 'refetching data when id is updated', ->
+      
+  describe 'fetch', ->
     beforeEach ->
       Ti.DB.Util.cleanDB()
       spyOn(menu, 'fetch').andCallThrough()
@@ -33,26 +29,24 @@ describe 'Menu model', ->
       Ti.DB.Util.activateUser 'jacktoken'
       spyOn(menu,'trigger').andCallThrough()
       menu.set {id:'8981a150-712c-012f-0267-58b035fd32cb'}
-      request = mostRecentAjaxRequest()
-      request.response({
+      mostRecentAjaxRequest().response {
         status: 200
-        responseText: JSON.stringify({
+        responseText: JSON.stringify {
             table_number: 1
-        })
-      })
-      expect(menu.get 'table_number').toEqual 1
-      expect(menu.trigger).toHaveBeenCalledWith('data:refetched')
+        }
+      }
+      expect(menu.attributes.table_number).toEqual 1
+      expect(menu.trigger).toHaveBeenCalledWith 'menu:refetched'
     it 'should not parse new data or trigger event when the fetch failed', ->
       Ti.DB.Util.insertUser 'jack', 'jacktoken'
       Ti.DB.Util.activateUser 'jacktoken'
       spyOn(menu,'trigger').andCallThrough()
       menu.set {id:'8981a150-712c-012f-0267-58b035fd32cb'}
-      request = mostRecentAjaxRequest()
-      request.response({
+      mostRecentAjaxRequest().response {
         status: 401
-        responseText: JSON.stringify({
+        responseText: JSON.stringify {
             error: 'login first'
-        })
-      })
-      expect(menu.get 'table_number').toBeNull()
-      expect(menu.trigger).not.toHaveBeenCalledWith('data:refetched')      
+        }
+      }
+      expect(menu.attributes.table_number).toBeNull()
+      expect(menu.trigger).not.toHaveBeenCalledWith 'menu:refetched'      

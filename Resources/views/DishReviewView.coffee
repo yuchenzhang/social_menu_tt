@@ -2,13 +2,14 @@ BaseView = require 'views/BaseView'
 class DishReviewView extends BaseView
   events:
     'change:rewritable':'tappableOverlay'
-    'refetched': 'refillContent'
+    'review:refetched': 'refillContent'
     
   review_bar:null
   image:null
   comment:null
   
   render: ->
+    Ti.API.debug "render dish review " + @model.attributes.id
     @review_bar = Ti.UI.createView
        width: '100%'
        height: 'auto'
@@ -32,13 +33,13 @@ class DishReviewView extends BaseView
       width: 'auto'
       height: 25  
     @image = Ti.UI.createImageView
-       image: decodeURIComponent @model.picture_url()
+       image: decodeURIComponent Ti.ImageProcess.urlComplete @model.attributes.picture
        width:  290
        height: 'auto' 
        top: 38
        right:10
     @image.add Ti.UI.createImageView
-      image: @model.attributes.user_avatar
+      image: Ti.ImageProcess.urlComplete @model.attributes.user_avatar
       width: 30
       height: 30
       top: 2
@@ -76,10 +77,6 @@ class DishReviewView extends BaseView
       width: 50
       height: 'auto'
       bottom: 5
-    
-    Ti.API.addEventListener 'created:review:dish_'+@model.attributes.dish_id, =>
-      Ti.API.debug 'received created:review:dish_' + @model.attributes.dish_id
-      @model.refetch()
     
     return @review_bar
     
@@ -137,7 +134,7 @@ class DishReviewView extends BaseView
     
   refillContent: =>
     Ti.API.debug "refill content for review " + @model.attributes.id
-    @image.image = decodeURIComponent @model.picture_url()
+    @image.image = decodeURIComponent Ti.ImageProcess.urlComplete @model.attributes.picture
     Ti.API.debug @image.image
     @comment.text = @model.attributes.comment
       

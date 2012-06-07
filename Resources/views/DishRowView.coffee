@@ -93,6 +93,9 @@ class DishRowView extends BaseView
     
     #review     
     review_bar = (new Ti.View.DishReviewView(@model.reviews.at(0))).render()
+    Ti.API.addEventListener 'created:review:dish_'+@model.attributes.id, =>
+      Ti.API.debug 'received created:review:dish_' + @model.attributes.id
+      @model.reviews.at(0).refetch()
                        
     @row.add info_bar
     @row.add description_bar

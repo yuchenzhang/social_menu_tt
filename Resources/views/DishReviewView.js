@@ -18,7 +18,7 @@
 
     DishReviewView.prototype.events = {
       'change:rewritable': 'tappableOverlay',
-      'refetched': 'refillContent'
+      'review:refetched': 'refillContent'
     };
 
     DishReviewView.prototype.review_bar = null;
@@ -28,7 +28,7 @@
     DishReviewView.prototype.comment = null;
 
     DishReviewView.prototype.render = function() {
-      var _this = this;
+      Ti.API.debug("render dish review " + this.model.attributes.id);
       this.review_bar = Ti.UI.createView({
         width: '100%',
         height: 'auto',
@@ -62,14 +62,14 @@
         height: 25
       }));
       this.image = Ti.UI.createImageView({
-        image: decodeURIComponent(this.model.picture_url()),
+        image: decodeURIComponent(Ti.ImageProcess.urlComplete(this.model.attributes.picture)),
         width: 290,
         height: 'auto',
         top: 38,
         right: 10
       });
       this.image.add(Ti.UI.createImageView({
-        image: this.model.attributes.user_avatar,
+        image: Ti.ImageProcess.urlComplete(this.model.attributes.user_avatar),
         width: 30,
         height: 30,
         top: 2,
@@ -118,10 +118,6 @@
         height: 'auto',
         bottom: 5
       }));
-      Ti.API.addEventListener('created:review:dish_' + this.model.attributes.dish_id, function() {
-        Ti.API.debug('received created:review:dish_' + _this.model.attributes.dish_id);
-        return _this.model.refetch();
-      });
       return this.review_bar;
     };
 
@@ -158,7 +154,7 @@
 
     DishReviewView.prototype.refillContent = function() {
       Ti.API.debug("refill content for review " + this.model.attributes.id);
-      this.image.image = decodeURIComponent(this.model.picture_url());
+      this.image.image = decodeURIComponent(Ti.ImageProcess.urlComplete(this.model.attributes.picture));
       Ti.API.debug(this.image.image);
       return this.comment.text = this.model.attributes.comment;
     };

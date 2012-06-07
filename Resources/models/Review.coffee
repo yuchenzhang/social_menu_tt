@@ -1,4 +1,5 @@
-class Review extends Backbone.Model
+BaseModel = require 'models/Base'
+class Review extends BaseModel
   defaults:
     id: null
     user_id: null
@@ -12,7 +13,7 @@ class Review extends Backbone.Model
     rewritable:false
     picture:null
     picture_binary:null
-  
+    
   validation:
     id:
       pattern: /\d+/
@@ -22,15 +23,11 @@ class Review extends Backbone.Model
       required: true
       pattern: /\d+/
     comment:
+      required: true
       maxLength: 140
-   
-   initialize: ->
-     super
-     @bind 'validated:invalid', (model,attrs,error)->
-       Ti.API.error error + ' ' + JSON.stringify model
-   
+     
    parse: (data)->
-     Ti.API.debug "review fetched: " + JSON.stringify data
+     Ti.API.debug "review parse: " + JSON.stringify data
      return {
        id: data.id
        picture: data.picture
@@ -39,28 +36,19 @@ class Review extends Backbone.Model
        user_avatar: data.user.avatar
        comment: data.comment
      }
-          
-   picture_url: ->
-     if @attributes.picture
-      if @attributes.picture.match /file:\/\//
-        return @attributes.picture
-      else
-        return Ti.App.endpoint + @attributes.picture
-     else
-      null
      
    url: ->
      if @attributes.id
-      Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews/' + @attributes.id
+       Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews/' + @attributes.id
      else
-      Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews'
+       Ti.App.endpoint + '/dishes/' + @attributes.dish_id + '/reviews'
    
    refetch: ->
      @set {id: -1}
-     @fetch({
+     @fetch {
        success: =>
          Ti.API.debug "refetched review " + @attributes.id
-         @trigger 'refetched'
-     })
+         @trigger 'review:refetched'
+     }
                           
 module.exports = Review      

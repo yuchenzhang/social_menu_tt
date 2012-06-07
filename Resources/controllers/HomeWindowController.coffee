@@ -7,8 +7,8 @@ Barcode.useFrontCamera = false
 MenuWindowController = require "controllers/MenuWindowController"
 
 class HomeWindowController
-  constructor: (menu, user)->
-    @menu = menu
+  constructor: (user)->
+    @menu = new Ti.Model.Menu
     @user = user
     @window = Ti.UI.createWindow({
       title: 'Homepage',
@@ -93,7 +93,7 @@ class HomeWindowController
                 # # Barcode.FORMAT_QR_CODE
             # # ]
         # })
-        @menu.set {'id': '646e14e0-6d0f-012f-00d0-58b035fd32cb'}
+        @menu.set {'id': 'demo'}
         
         
     # scrollView.add scanCode
@@ -106,7 +106,7 @@ class HomeWindowController
       @menu.set {'id': e.result}
       Barcode.cancel()
       
-    @menu.on "data:refetched", =>
+    @menu.on "menu:refetched", =>
       try
         menu_window = (new Ti.Controller.MenuWindow(@menu, @user)).window
         menu_window.containingTab = @window.containingTab

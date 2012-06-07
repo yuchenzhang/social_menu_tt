@@ -24,7 +24,7 @@ class DishReviewComposeView extends BaseView
       keyboardToolbarHeight : 40
       
     @image = Ti.UI.createImageView
-      image: Ti.ImageProcess.cropImage @model.picture_url()
+      image: Ti.ImageProcess.cropImage Ti.ImageProcess.urlComplete @model.attributes.picture
       width: 280
       height: 'auto'
       bottom: 50
@@ -70,16 +70,11 @@ class DishReviewComposeView extends BaseView
     return @view
 
   reset: (review)->
-    @model.set {
-      id:null
-      comment:null
-      picture:review.attributes.picture
-      dish_id:review.attributes.dish_id
-      user_id: null
-    }
-    @image.image = Ti.ImageProcess.cropImage @model.picture_url()
-    @textarea.value = 'Focus to see keyboard with toolbar'
+    @model = review
+    @image.image = Ti.ImageProcess.cropImage Ti.ImageProcess.urlComplete @model.attributes.picture
+    @textarea.value = @model.attributes.comment
     @send_btn.title = 'Send'
     @send_btn.enabled = true
     @view.show()
+    
 module.exports = DishReviewComposeView

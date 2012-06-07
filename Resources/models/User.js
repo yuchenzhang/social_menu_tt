@@ -1,7 +1,9 @@
 (function() {
-  var User,
+  var BaseModel, User,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BaseModel = require('models/Base');
 
   User = (function(_super) {
 
@@ -14,6 +16,10 @@
     User.prototype.urlRoot = Ti.App.endpoint + '/users';
 
     User.prototype.defaults = {
+      id: null,
+      name: null,
+      email: null,
+      password: null,
       avatar: "images/icons/jack.png"
     };
 
@@ -21,9 +27,6 @@
       email: {
         required: true,
         pattern: 'email'
-      },
-      password: {
-        required: false
       }
     };
 
@@ -37,7 +40,7 @@
         });
       });
       return this.on('signIn:error', function(model, resp) {
-        return Ti.API.debug("sign in error");
+        return Ti.API.error("sign in error");
       });
     };
 
@@ -52,17 +55,17 @@
         contentType: 'application/json',
         data: JSON.stringify({
           user: {
-            email: this.get('email'),
-            password: this.get('password')
+            email: this.attributes.email,
+            password: this.attributes.password
           }
         }),
         success: function(resp, status, xhr) {
           Ti.API.debug('sign in succeeded with resp: ' + JSON.stringify(resp));
-          Ti.DB.Util.insertUser(_this.get('name'), resp.authentication_token);
+          Ti.DB.Util.insertUser(_this.attributes.name, resp.authentication_token);
           Ti.DB.Util.activateUser(resp.authentication_token);
           _this.set({
             authentication_token: resp.authentication_token,
-            avatar: Ti.App.endpoint + resp.avatar,
+            avatar: resp.avatar,
             name: resp.name,
             id: resp.id
           });
@@ -77,7 +80,7 @@
 
     return User;
 
-  })(Backbone.Model);
+  })(BaseModel);
 
   module.exports = User;
 

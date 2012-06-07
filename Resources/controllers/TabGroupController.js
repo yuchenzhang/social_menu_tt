@@ -4,12 +4,11 @@
   TabGroupController = (function() {
 
     function TabGroupController(user) {
-      var home_tab, home_window, menu, message_tab, message_window, profile_tab, profile_window, tab_group, timeline_tab, timeline_window, trending_tab, trending_window;
+      var home_tab, home_window, message_tab, message_window, profile_tab, profile_window, tab_group, timeline_tab, timeline_window, trending_tab, trending_window;
       tab_group = Ti.UI.createTabGroup({
         titleid: 'tab_group'
       });
-      menu = new Ti.Model.Menu;
-      home_window = (new Ti.Controller.HomeWindow(menu, user)).window;
+      home_window = (new Ti.Controller.HomeWindow(user)).window;
       timeline_window = (new Ti.Controller.TimelineWindow(user)).window;
       trending_window = (new Ti.Controller.TrendingWindow(user)).window;
       message_window = (new Ti.Controller.MessageWindow(user)).window;

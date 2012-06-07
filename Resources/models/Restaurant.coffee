@@ -1,4 +1,5 @@
-class Restaurant extends Backbone.Model
+BaseModel = require 'models/Base'
+class Restaurant extends BaseModel
   defaults:
     name:     null
     latitude: null

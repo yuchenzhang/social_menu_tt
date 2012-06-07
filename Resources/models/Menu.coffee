@@ -1,4 +1,5 @@
-class Menu extends Backbone.Model
+BaseModel = require 'models/Base'
+class Menu extends BaseModel
   urlRoot: Ti.App.endpoint + "/menus"
   defaults:
     id: null
@@ -12,23 +13,17 @@ class Menu extends Backbone.Model
     @restaurant = new Ti.Model.Restaurant
     @dishes = new Ti.Model.DishCollection
     @on "change:id", =>
-      return unless @get('id') and Ti.DB.Util.activeToken()
+      return unless @attributes.id and Ti.DB.Util.activeToken()
       @fetch
         data: {authentication_token:Ti.DB.Util.activeToken()}
         success: =>
-          @trigger "data:refetched"
+          @trigger "menu:refetched"
         error: (model, resp)=>
-          Ti.API.error "menu fetch error with " + model.get 'id'
-    if @get('id') and Ti.DB.Util.activeToken()
-      @fetch
-        data: {authentication_token:Ti.DB.Util.activeToken()}
-        success: =>
-          @trigger "data:refetched"
-        error: (model, resp)=>
-          Ti.API.error "menu fetch error with " + model.get 'id'
+          Ti.API.error "menu fetch error with " + model.attributes.id
+    @trigger 'change:id'
  
   parse: (data)->
-    Ti.API.debug "parsing data: " + JSON.stringify(data)
+    Ti.API.debug "parsing menu: " + JSON.stringify(data)
     if data.restaurant
       try
         @restaurant.set @restaurant.parse data.restaurant

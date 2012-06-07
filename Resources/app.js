@@ -3,10 +3,11 @@
 
   init = function() {
     Ti.App = {
-      endpoint: "http://192.168.1.12:8000",
-      test_enabled: false
+      endpoint: "http://localhost:8000",
+      test_enabled: true
     };
     Ti.Model = {
+      BaseModel: require("models/Base"),
       Dish: require("models/Dish"),
       DishCollection: require("models/DishCollection"),
       Menu: require("models/Menu"),
@@ -14,7 +15,8 @@
       User: require("models/User"),
       Order: require("models/Order"),
       Review: require("models/Review"),
-      ReviewCollection: require("models/ReviewCollection")
+      ReviewCollection: require("models/ReviewCollection"),
+      Timeline: require("models/Timeline")
     };
     Ti.DB = {
       Util: require("helper/DB"),
@@ -37,7 +39,8 @@
       DishRowView: require('views/DishRowView'),
       DishReviewView: require('views/DishReviewView'),
       OrderView: require('views/OrderView'),
-      DishReviewComposeView: require('views/DishReviewComposeView')
+      DishReviewComposeView: require('views/DishReviewComposeView'),
+      TimelineView: require('views/TimelineView')
     };
     if (Ti.App.test_enabled) {
       return Ti.include("specs/tests.js");

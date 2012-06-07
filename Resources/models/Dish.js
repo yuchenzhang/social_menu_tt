@@ -1,7 +1,9 @@
 (function() {
-  var Dish,
+  var BaseModel, Dish,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BaseModel = require('models/Base');
 
   Dish = (function(_super) {
 
@@ -53,11 +55,12 @@
       var _this = this;
       this.reviews || (this.reviews = new Ti.Model.ReviewCollection);
       return this.reviews.reset(_.map(reviews, function(re) {
+        if (re.review !== void 0) re = re.review;
         return {
           id: re.id,
           user_id: re.user.id,
           user_name: re.user.name,
-          user_avatar: Ti.App.endpoint + re.user.avatar,
+          user_avatar: re.user.avatar,
           dish_id: _this.attributes.id,
           dish_name: _this.attributes.name,
           dish_price: _this.attributes.price,
@@ -90,7 +93,7 @@
 
     return Dish;
 
-  })(Backbone.Model);
+  })(BaseModel);
 
   module.exports = Dish;
 

@@ -1,4 +1,5 @@
-class Dish extends Backbone.Model
+BaseModel = require 'models/Base'
+class Dish extends BaseModel
   defaults:
     id: null   
     name: null
@@ -34,11 +35,12 @@ class Dish extends Backbone.Model
   parseReviews: (reviews)->
     @reviews ||= new Ti.Model.ReviewCollection
     @reviews.reset _.map reviews, (re)=>
+        re = re.review unless re.review == undefined
         {
           id: re.id
           user_id: re.user.id
           user_name: re.user.name
-          user_avatar: Ti.App.endpoint + re.user.avatar
+          user_avatar: re.user.avatar
           dish_id: @attributes.id
           dish_name: @attributes.name
           dish_price: @attributes.price

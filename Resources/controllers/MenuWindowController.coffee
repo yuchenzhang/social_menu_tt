@@ -3,8 +3,8 @@ class MenuWindowController
     @menu = menu
     @user = user
     @order = new Ti.Model.Order {
-      user_id:@user.attributes.id
-      restaurant_id:@menu.restaurant.attributes.id
+      user:{id:@user.attributes.id}
+      restaurant:{id:@menu.restaurant.attributes.id}
       status:'pending'},menu.dishes
     @window = Ti.UI.createWindow
       title: 'SocialMenu menupage'
@@ -92,7 +92,7 @@ class MenuWindowController
       height: 35
       top:35
     avatar = Ti.UI.createImageView
-      image: @user.get 'avatar'
+      image: Ti.ImageProcess.urlComplete @user.attributes.avatar
       width: 25
       height: 25
       left: 10

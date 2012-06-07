@@ -7,8 +7,12 @@
       this.menu = menu;
       this.user = user;
       this.order = new Ti.Model.Order({
-        user_id: this.user.attributes.id,
-        restaurant_id: this.menu.restaurant.attributes.id,
+        user: {
+          id: this.user.attributes.id
+        },
+        restaurant: {
+          id: this.menu.restaurant.attributes.id
+        },
         status: 'pending'
       }, menu.dishes);
       this.window = Ti.UI.createWindow({
@@ -132,7 +136,7 @@
         top: 35
       }));
       avatar = Ti.UI.createImageView({
-        image: this.user.get('avatar'),
+        image: Ti.ImageProcess.urlComplete(this.user.attributes.avatar),
         width: 25,
         height: 25,
         left: 10

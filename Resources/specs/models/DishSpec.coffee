@@ -3,17 +3,11 @@ describe 'Dish model', ->
   beforeEach ->
     dish = new Ti.Model.Dish
   
-  describe 'default attributes', ->
-    it 'should have a default id', ->
-      expect(dish.get 'id').toBeDefined()
-    it 'should have a default name', ->
-      expect(dish.get 'name').toBeDefined()
-    it 'should have a default price', ->
-      expect(dish.get 'price').toBeDefined()
-    it 'should not have its review collection defined by default', ->
-      expect(dish.reviews).toBeUndefined()
-    it 'should not have its count defined by default', ->
-      expect(dish.count).toBeUndefined()
+  describe 'attributes', ->
+    it 'should have its count defined as zero by default', ->
+      expect(dish.attributes.count).toEqual 0
+    it 'should by default is orderable', ->
+      expect(dish.attributes.orderable).toEqual true
   
   describe 'validations', ->
     it 'should not accept a invalid id', ->
@@ -26,6 +20,8 @@ describe 'Dish model', ->
       expect(dish.set {price: null}).toBeFalsy()
     it 'should not accept a invalid price', ->
       expect(dish.set {price: 'abc'}).toBeFalsy()
+    it 'should not accept a invalid count', ->
+      expect(dish.set {count: 'abc'}).toBeFalsy()
     it 'should not accept a minus count', ->
       expect(dish.set {count:-1}).toBeFalsy()
  
@@ -46,7 +42,7 @@ describe 'Dish model', ->
         description: 'blabla'
       }
       expect(dish.parse data).toEqual attributes
-      expect(dish.reviews.size()).toEqual 2
+      expect(dish.reviews.length).toEqual 2
       expect(dish.reviews.at(0) instanceof Ti.Model.Review).toBeTruthy()
-      expect(dish.reviews.at(0).get 'id').toEqual 1
+      expect(dish.reviews.at(0).attributes.picture).toEqual 'images/1.png'
   

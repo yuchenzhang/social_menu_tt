@@ -3,8 +3,7 @@ class TabGroupController
     tab_group = Ti.UI.createTabGroup
       titleid: 'tab_group'
     
-    menu = new Ti.Model.Menu
-    home_window = (new Ti.Controller.HomeWindow(menu,user)).window
+    home_window = (new Ti.Controller.HomeWindow(user)).window
     timeline_window = (new Ti.Controller.TimelineWindow(user)).window
     trending_window = (new Ti.Controller.TrendingWindow(user)).window
     message_window = (new Ti.Controller.MessageWindow(user)).window

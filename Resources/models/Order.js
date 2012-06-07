@@ -1,8 +1,10 @@
 (function() {
-  var Order,
+  var BaseModel, Order,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; },
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BaseModel = require('models/Base');
 
   Order = (function(_super) {
 
@@ -10,6 +12,7 @@
 
     function Order() {
       this.orderDish = __bind(this.orderDish, this);
+      this.forceConfirm = __bind(this.forceConfirm, this);
       Order.__super__.constructor.apply(this, arguments);
     }
 
@@ -56,7 +59,7 @@
         return dish.on('change:count', _this.orderDish);
       });
       this.on("change:id", function() {
-        if (_this.attributes.id) {
+        if (_this.attributes.id && !Ti.App.test_enabled) {
           return _this.sync_id = setInterval((function() {
             return _this.fetch();
           }), 5000);
@@ -69,6 +72,11 @@
               orderable: false
             });
           });
+          if (!Ti.App.test_enabled) {
+            setTimeout((function() {
+              return _this.forceConfirm();
+            }), 5000);
+          }
         }
         if (_this.attributes.status === 'confirmed') {
           if (_this.sync_id) clearInterval(_this.sync_id);
@@ -78,6 +86,12 @@
             });
           });
         }
+      });
+    };
+
+    Order.prototype.forceConfirm = function() {
+      return this.set({
+        status: 'confirmed'
       });
     };
 
@@ -103,7 +117,7 @@
     Order.prototype.toJSON = function() {
       var json;
       json = {
-        id: this.get('id'),
+        id: this.attributes.id,
         restaurant_id: this.attributes.restaurant_id,
         user_id: this.attributes.user_id,
         authentication_token: Ti.DB.Util.activeToken(),
@@ -124,15 +138,15 @@
       Ti.API.debug("parsing order " + JSON.stringify(data));
       return {
         id: data.id,
-        restaurant_id: data.restaurant_id || data.restaurant.id,
-        user_id: data.user_id || data.user.id,
+        restaurant_id: data.restaurant.id,
+        user_id: data.user.id,
         status: data.status
       };
     };
 
     return Order;
 
-  })(Backbone.Model);
+  })(BaseModel);
 
   module.exports = Order;
 

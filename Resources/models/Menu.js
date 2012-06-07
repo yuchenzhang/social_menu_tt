@@ -1,7 +1,9 @@
 (function() {
-  var Menu,
+  var BaseModel, Menu,
     __hasProp = Object.prototype.hasOwnProperty,
     __extends = function(child, parent) { for (var key in parent) { if (__hasProp.call(parent, key)) child[key] = parent[key]; } function ctor() { this.constructor = child; } ctor.prototype = parent.prototype; child.prototype = new ctor; child.__super__ = parent.prototype; return child; };
+
+  BaseModel = require('models/Base');
 
   Menu = (function(_super) {
 
@@ -27,36 +29,24 @@
       this.restaurant = new Ti.Model.Restaurant;
       this.dishes = new Ti.Model.DishCollection;
       this.on("change:id", function() {
-        if (!(_this.get('id') && Ti.DB.Util.activeToken())) return;
+        if (!(_this.attributes.id && Ti.DB.Util.activeToken())) return;
         return _this.fetch({
           data: {
             authentication_token: Ti.DB.Util.activeToken()
           },
           success: function() {
-            return _this.trigger("data:refetched");
+            return _this.trigger("menu:refetched");
           },
           error: function(model, resp) {
-            return Ti.API.error("menu fetch error with " + model.get('id'));
+            return Ti.API.error("menu fetch error with " + model.attributes.id);
           }
         });
       });
-      if (this.get('id') && Ti.DB.Util.activeToken()) {
-        return this.fetch({
-          data: {
-            authentication_token: Ti.DB.Util.activeToken()
-          },
-          success: function() {
-            return _this.trigger("data:refetched");
-          },
-          error: function(model, resp) {
-            return Ti.API.error("menu fetch error with " + model.get('id'));
-          }
-        });
-      }
+      return this.trigger('change:id');
     };
 
     Menu.prototype.parse = function(data) {
-      Ti.API.debug("parsing data: " + JSON.stringify(data));
+      Ti.API.debug("parsing menu: " + JSON.stringify(data));
       if (data.restaurant) {
         try {
           this.restaurant.set(this.restaurant.parse(data.restaurant));
@@ -82,7 +72,7 @@
 
     return Menu;
 
-  })(Backbone.Model);
+  })(BaseModel);
 
   module.exports = Menu;
 
